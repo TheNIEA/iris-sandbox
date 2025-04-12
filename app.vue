@@ -1,19 +1,23 @@
 <template>
-  <div id="landing-page">
-    <canvas id="background-canvas"></canvas>
-    <div class="content">
-      <h1>Welcome to NIEA</h1>
-      <p>Innovating the future, one step at a time.</p>
-      <button>Learn More</button>
-    </div>
+  <div class="dark-theme">
+    <FloatingNav />
+    <NuxtPage />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, nextTick } from 'vue'
 
 onMounted(async () => {
+  await nextTick()
   const { initThreeJS } = await import('~/assets/script.js')
   initThreeJS()
 })
 </script>
+
+<style>
+.dark-theme {
+  min-height: 100vh;
+  width: 100%;
+}
+</style>

@@ -5,6 +5,17 @@ body, html {
   font-family: Arial, sans-serif;
 }
 
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 #landing-page {
   position: relative;
   width: 100vw;

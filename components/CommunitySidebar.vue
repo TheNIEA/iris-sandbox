@@ -1,38 +1,38 @@
 <template>
-  <div class="fixed left-0 top-0 h-screen w-64 bg-gray-800/95 backdrop-blur-lg border-r border-gray-700 p-4 overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600">
+  <div class="fixed left-0 top-0 h-screen w-80 bg-gray-800/95 backdrop-blur-lg border-r border-gray-700 p-5 overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600">
     <!-- Logo/Header -->
-    <div class="mb-6 flex items-center justify-between">
-      <h2 class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Communities</h2>
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Communities</h2>
       <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">Beta</span>
     </div>
 
     <!-- Search and filters -->
-    <div class="mb-6 space-y-3">
+    <div class="mb-8 space-y-4">
       <div class="relative">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search communities..."
-          class="w-full bg-gray-900/50 text-gray-100 rounded-lg pl-9 pr-4 py-2 border border-gray-700 focus:border-blue-500 focus:outline-none"
+          class="w-full bg-gray-900/50 text-gray-100 rounded-lg pl-10 pr-4 py-3 border border-gray-700 focus:border-blue-500 focus:outline-none"
         />
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
       </div>
       
       <!-- Filter options -->
-      <div class="bg-gray-900/30 rounded-lg p-3 border border-gray-700/50">
-        <div class="flex justify-between items-center mb-2">
+      <div class="bg-gray-900/30 rounded-lg p-4 border border-gray-700/50">
+        <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-400 font-medium">FILTERS</span>
           <button @click="resetFilters" class="text-xs text-blue-400 hover:text-blue-300">Reset</button>
         </div>
         
         <!-- Revenue filter -->
-        <div class="mb-3">
-          <label class="text-xs text-gray-500 block mb-1">Min Revenue</label>
-          <select v-model="filters.minRevenue" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-2 py-1.5 focus:outline-none focus:border-blue-500 appearance-none">
+        <div class="mb-4">
+          <label class="text-xs text-gray-500 block mb-2">Min Revenue</label>
+          <select v-model="filters.minRevenue" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-3 py-2 focus:outline-none focus:border-blue-500 appearance-none">
             <option value="0">Any amount</option>
             <option value="10000">$10k+</option>
             <option value="50000">$50k+</option>
@@ -42,9 +42,9 @@
         </div>
         
         <!-- Cost filter -->
-        <div class="mb-3">
-          <label class="text-xs text-gray-500 block mb-1">Max Entry Cost</label>
-          <select v-model="filters.maxCost" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-2 py-1.5 focus:outline-none focus:border-blue-500 appearance-none">
+        <div class="mb-4">
+          <label class="text-xs text-gray-500 block mb-2">Max Entry Cost</label>
+          <select v-model="filters.maxCost" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-3 py-2 focus:outline-none focus:border-blue-500 appearance-none">
             <option value="10000">Any cost</option>
             <option value="0">Free</option>
             <option value="100">Under $100</option>
@@ -55,14 +55,14 @@
         
         <!-- Size filter -->
         <div>
-          <label class="text-xs text-gray-500 block mb-1">Community Size</label>
+          <label class="text-xs text-gray-500 block mb-2">Community Size</label>
           <div class="flex space-x-2">
             <button 
               v-for="size in ['Any', 'Small', 'Medium', 'Large']" 
               :key="size"
               @click="filters.size = size === 'Any' ? null : size.toLowerCase()"
               :class="[
-                'text-xs px-2 py-1 rounded-full border',
+                'text-xs px-3 py-1.5 rounded-full border',
                 filters.size === (size === 'Any' ? null : size.toLowerCase())
                   ? 'bg-blue-500/20 border-blue-500/50 text-blue-300'
                   : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
@@ -76,12 +76,12 @@
     </div>
 
     <!-- Categories & Communities -->
-    <div class="space-y-2">
-      <div v-for="(category, index) in categories" :key="category.name" class="mb-3">
+    <div class="space-y-3">
+      <div v-for="(category, index) in categories" :key="category.name" class="mb-4">
         <!-- Category Header (Accordion) -->
         <div 
           @click="toggleCategory(index)"
-          class="flex items-center justify-between text-gray-300 cursor-pointer p-2 rounded-lg hover:bg-gray-700/30 transition-colors"
+          class="flex items-center justify-between text-gray-300 cursor-pointer p-3 rounded-lg hover:bg-gray-700/30 transition-colors"
         >
           <h3 class="font-medium text-sm">{{ category.name }}</h3>
           <div class="flex items-center">
@@ -103,14 +103,14 @@
         
         <!-- Communities List (Expandable) -->
         <transition name="expand">
-          <ul v-if="activeCategory === index" class="mt-1 space-y-1 pl-1">
+          <ul v-if="activeCategory === index" class="mt-2 space-y-2 pl-2">
             <li
               v-for="community in filteredCommunities(category.communities)"
               :key="community.name"
-              class="bg-gray-800/40 rounded-lg mb-2 hover:bg-gray-800/80 transition-colors border border-gray-700/50 hover:border-gray-700 overflow-hidden"
+              class="bg-gray-800/40 rounded-lg mb-3 hover:bg-gray-800/80 transition-colors border border-gray-700/50 hover:border-gray-700 overflow-hidden"
             >
-              <div class="p-3">
-                <div class="flex items-center mb-2">
+              <div class="p-4">
+                <div class="flex items-center mb-3">
                   <span :class="[
                     'w-2 h-2 rounded-full mr-2',
                     `bg-${community.color}-400`
@@ -118,7 +118,7 @@
                   <span class="font-medium text-sm text-gray-200">{{ community.name }}</span>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="grid grid-cols-2 gap-3 text-xs">
                   <div class="flex flex-col">
                     <span class="text-gray-500">Members</span>
                     <span class="text-gray-300 font-medium">{{ community.members }}</span>
@@ -144,7 +144,7 @@
                   </div>
                 </div>
 
-                <button class="mt-2 w-full py-1 rounded text-xs font-medium bg-gray-700/50 hover:bg-gray-700 text-gray-300 transition-colors">
+                <button class="mt-3 w-full py-1.5 rounded text-xs font-medium bg-gray-700/50 hover:bg-gray-700 text-gray-300 transition-colors">
                   View Details
                 </button>
               </div>

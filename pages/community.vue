@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-900 text-gray-100">
     <CommunitySidebar />
-    <div class="ml-64 p-6">
+    <div class="ml-80 p-6">
       <Title tag="h1">Community Marketplace</Title>
 
       <!-- Community Overview -->

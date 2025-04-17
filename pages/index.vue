@@ -10,13 +10,13 @@
             <img src="https://s3.us-east-2.amazonaws.com/theniea.com/TheNIEA-icon.png" alt="NIEA Logo" class="h-12 w-auto mr-3" />
             <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">NIEA</span>
           </div>
-          <nav class="hidden md:flex space-x-8">
+          <!-- <nav class="hidden md:flex space-x-8">
             <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
             <a href="#components" class="text-gray-300 hover:text-white transition-colors">Components</a>
             <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors">How It Works</a>
             <a href="#impact" class="text-gray-300 hover:text-white transition-colors">Impact</a>
             <a href="#get-involved" class="text-gray-300 hover:text-white transition-colors">Get Involved</a>
-          </nav>
+          </nav> -->
           <div class="md:hidden">
             <button class="text-gray-300 hover:text-white">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

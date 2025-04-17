@@ -2,8 +2,8 @@
   <div class="fixed left-0 top-0 h-screen w-80 bg-gray-800/95 backdrop-blur-lg border-r border-gray-700 p-5 overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600">
     <!-- Logo/Header -->
     <div class="mb-8 flex items-center justify-between">
-      <h2 class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Communities</h2>
-      <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">Beta</span>
+      <h2 class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Ecosystems</h2>
+      <span class="text-xs px-2 py-1 bg-blue-900/50 border border-blue-700/30 rounded-full text-blue-300">Beta 2.0</span>
     </div>
 
     <!-- Search and filters -->
@@ -12,7 +12,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search communities..."
+          placeholder="Search ecosystems..."
           class="w-full bg-gray-900/50 text-gray-100 rounded-lg pl-10 pr-4 py-3 border border-gray-700 focus:border-blue-500 focus:outline-none"
         />
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -29,9 +29,9 @@
           <button @click="resetFilters" class="text-xs text-blue-400 hover:text-blue-300">Reset</button>
         </div>
         
-        <!-- Revenue filter -->
+        <!-- Network Worth filter -->
         <div class="mb-4">
-          <label class="text-xs text-gray-500 block mb-2">Min Revenue</label>
+          <label class="text-xs text-gray-500 block mb-2">Min Network Worth</label>
           <select v-model="filters.minRevenue" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-3 py-2 focus:outline-none focus:border-blue-500 appearance-none">
             <option value="0">Any amount</option>
             <option value="10000">$10k+</option>
@@ -41,9 +41,9 @@
           </select>
         </div>
         
-        <!-- Cost filter -->
+        <!-- Access Cost filter -->
         <div class="mb-4">
-          <label class="text-xs text-gray-500 block mb-2">Max Entry Cost</label>
+          <label class="text-xs text-gray-500 block mb-2">Max Access Cost</label>
           <select v-model="filters.maxCost" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-3 py-2 focus:outline-none focus:border-blue-500 appearance-none">
             <option value="10000">Any cost</option>
             <option value="0">Free</option>
@@ -53,12 +53,24 @@
           </select>
         </div>
         
-        <!-- Size filter -->
+        <!-- Circulation filter (new) -->
+        <div class="mb-4">
+          <label class="text-xs text-gray-500 block mb-2">Min Daily Circulation</label>
+          <select v-model="filters.minCirculation" class="w-full bg-gray-800 text-gray-300 text-xs rounded border border-gray-700 px-3 py-2 focus:outline-none focus:border-blue-500 appearance-none">
+            <option value="0">Any amount</option>
+            <option value="1000">$1k+</option>
+            <option value="5000">$5k+</option>
+            <option value="10000">$10k+</option>
+            <option value="50000">$50k+</option>
+          </select>
+        </div>
+        
+        <!-- Ecosystem Size filter -->
         <div>
-          <label class="text-xs text-gray-500 block mb-2">Community Size</label>
+          <label class="text-xs text-gray-500 block mb-2">Ecosystem Size</label>
           <div class="flex space-x-2">
             <button 
-              v-for="size in ['Any', 'Small', 'Medium', 'Large']" 
+              v-for="size in ['Any', 'Micro', 'Small', 'Large']" 
               :key="size"
               @click="filters.size = size === 'Any' ? null : size.toLowerCase()"
               :class="[
@@ -75,7 +87,7 @@
       </div>
     </div>
 
-    <!-- Categories & Communities -->
+    <!-- Categories & Ecosystems -->
     <div class="space-y-3">
       <div v-for="(category, index) in categories" :key="category.name" class="mb-4">
         <!-- Category Header (Accordion) -->
@@ -85,7 +97,7 @@
         >
           <h3 class="font-medium text-sm">{{ category.name }}</h3>
           <div class="flex items-center">
-            <span class="text-xs text-gray-500 mr-2">{{ category.communities.length }}</span>
+            <span class="text-xs text-gray-500 mr-2">{{ category.ecosystems.length }}</span>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               :class="[
@@ -101,52 +113,57 @@
           </div>
         </div>
         
-        <!-- Communities List (Expandable) -->
+        <!-- Ecosystems List (Expandable) -->
         <transition name="expand">
           <ul v-if="activeCategory === index" class="mt-2 space-y-2 pl-2">
             <li
-              v-for="community in filteredCommunities(category.communities)"
-              :key="community.name"
+              v-for="ecosystem in filteredEcosystems(category.ecosystems)"
+              :key="ecosystem.name"
               class="bg-gray-800/40 rounded-lg mb-3 hover:bg-gray-800/80 transition-colors border border-gray-700/50 hover:border-gray-700 overflow-hidden"
             >
               <div class="p-4">
                 <div class="flex items-center mb-3">
                   <span :class="[
                     'w-2 h-2 rounded-full mr-2',
-                    `bg-${community.color}-400`
+                    `bg-${ecosystem.color}-400`
                   ]"></span>
-                  <span class="font-medium text-sm text-gray-200">{{ community.name }}</span>
+                  <span class="font-medium text-sm text-gray-200">{{ ecosystem.name }}</span>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 text-xs">
                   <div class="flex flex-col">
-                    <span class="text-gray-500">Members</span>
-                    <span class="text-gray-300 font-medium">{{ community.members }}</span>
+                    <span class="text-gray-500">Participants</span>
+                    <span class="text-gray-300 font-medium">{{ ecosystem.members }}</span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-gray-500">Revenue</span>
-                    <span :class="`text-${community.color}-400 font-medium`">${{ formatNumber(community.revenue) }}</span>
+                    <span class="text-gray-500">Network Worth</span>
+                    <span :class="`text-${ecosystem.color}-400 font-medium`">${{ formatNumber(ecosystem.revenue) }}</span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-gray-500">Cost to Join</span>
-                    <span class="text-gray-300 font-medium">{{ community.cost === 0 ? 'Free' : '$' + community.cost }}</span>
+                    <span class="text-gray-500">Daily Circulation</span>
+                    <span :class="`text-${ecosystem.color}-300 font-medium`">${{ formatNumber(ecosystem.circulation) }}</span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-gray-500">Activity</span>
+                    <span class="text-gray-500">Deal Flow</span>
                     <div class="flex items-center">
                       <span :class="[
                         'w-1.5 h-1.5 rounded-full mr-1',
-                        community.activity > 70 ? 'bg-green-400' : 
-                        community.activity > 30 ? 'bg-yellow-400' : 'bg-red-400'
+                        ecosystem.dealFlow > 70 ? 'bg-green-400' : 
+                        ecosystem.dealFlow > 30 ? 'bg-yellow-400' : 'bg-red-400'
                       ]"></span>
-                      <span class="text-gray-300">{{ community.activity }}%</span>
+                      <span class="text-gray-300">{{ ecosystem.dealFlow }}%</span>
                     </div>
                   </div>
                 </div>
 
-                <button class="mt-3 w-full py-1.5 rounded text-xs font-medium bg-gray-700/50 hover:bg-gray-700 text-gray-300 transition-colors">
-                  View Details
-                </button>
+                <div class="mt-3 flex space-x-2">
+                  <button class="flex-1 py-1.5 rounded text-xs font-medium bg-gray-700/50 hover:bg-gray-700 text-gray-300 transition-colors">
+                    View Data
+                  </button>
+                  <button class="flex-1 py-1.5 rounded text-xs font-medium bg-blue-700/40 hover:bg-blue-700/60 text-blue-300 transition-colors">
+                    Join
+                  </button>
+                </div>
               </div>
             </li>
           </ul>
@@ -160,44 +177,165 @@
 import { ref, computed, reactive, onMounted } from 'vue'
 
 const searchQuery = ref('')
-const activeCategory = ref(null) // Instead of expandedCategories array
+const activeCategory = ref(null)
 const filters = reactive({
   minRevenue: 0,
   maxCost: 10000,
+  minCirculation: 0,
   size: null
 })
 
 const categories = ref([
   {
-    name: 'Music Production',
-    communities: [
-      { name: 'Beat Makers', members: '1.2k', membersCount: 1200, revenue: 85000, cost: 50, activity: 82, color: 'blue' },
-      { name: 'Vocal Artists', members: '890', membersCount: 890, revenue: 45000, cost: 75, activity: 65, color: 'purple' },
-      { name: 'Mix Masters', members: '650', membersCount: 650, revenue: 120000, cost: 200, activity: 78, color: 'pink' }
+    name: 'Technology',
+    ecosystems: [
+      { 
+        name: 'AI Innovators', 
+        members: '2.3k', 
+        membersCount: 2300, 
+        revenue: 3850000, 
+        circulation: 42000,
+        cost: 150, 
+        dealFlow: 89, 
+        color: 'blue',
+        openPositions: 24
+      },
+      { 
+        name: 'Web3 Builders', 
+        members: '1.8k', 
+        membersCount: 1800, 
+        revenue: 2450000, 
+        circulation: 28000,
+        cost: 200, 
+        dealFlow: 76, 
+        color: 'purple',
+        openPositions: 17
+      },
+      { 
+        name: 'Data Science Hub', 
+        members: '1.5k', 
+        membersCount: 1500, 
+        revenue: 1820000, 
+        circulation: 15000,
+        cost: 100, 
+        dealFlow: 82, 
+        color: 'emerald',
+        openPositions: 12
+      }
     ]
   },
   {
-    name: 'Instruments',
-    communities: [
-      { name: 'Guitar Heroes', members: '2.3k', membersCount: 2300, revenue: 210000, cost: 25, activity: 91, color: 'emerald' },
-      { name: 'Keys & Synthesis', members: '1.1k', membersCount: 1100, revenue: 78000, cost: 0, activity: 73, color: 'blue' },
-      { name: 'Drum Circle', members: '780', membersCount: 780, revenue: 34000, cost: 60, activity: 45, color: 'purple' }
+    name: 'Entertainment',
+    ecosystems: [
+      { 
+        name: 'Creator Economy', 
+        members: '4.2k', 
+        membersCount: 4200, 
+        revenue: 5600000, 
+        circulation: 76000,
+        cost: 75, 
+        dealFlow: 91, 
+        color: 'pink',
+        openPositions: 38
+      },
+      { 
+        name: 'Media Production', 
+        members: '2.4k', 
+        membersCount: 2400, 
+        revenue: 3200000, 
+        circulation: 45000,
+        cost: 125, 
+        dealFlow: 84, 
+        color: 'amber',
+        openPositions: 26
+      },
+      { 
+        name: 'Gaming Collective', 
+        members: '3.5k', 
+        membersCount: 3500, 
+        revenue: 4100000, 
+        circulation: 67000,
+        cost: 50, 
+        dealFlow: 88, 
+        color: 'indigo',
+        openPositions: 31
+      }
     ]
   },
   {
-    name: 'Industry',
-    communities: [
-      { name: 'Label Connect', members: '3.4k', membersCount: 3400, revenue: 1200000, cost: 500, activity: 88, color: 'emerald' },
-      { name: 'Marketing Pros', members: '920', membersCount: 920, revenue: 67000, cost: 150, activity: 63, color: 'pink' },
-      { name: 'Event Planning', members: '650', membersCount: 650, revenue: 93000, cost: 100, activity: 71, color: 'blue' }
+    name: 'Finance',
+    ecosystems: [
+      { 
+        name: 'DeFi Alliance', 
+        members: '1.7k', 
+        membersCount: 1700, 
+        revenue: 8200000, 
+        circulation: 145000,
+        cost: 500, 
+        dealFlow: 79, 
+        color: 'emerald',
+        openPositions: 14
+      },
+      { 
+        name: 'FinTech Innovators', 
+        members: '1.9k', 
+        membersCount: 1900, 
+        revenue: 6700000, 
+        circulation: 98000,
+        cost: 350, 
+        dealFlow: 85, 
+        color: 'blue',
+        openPositions: 22
+      },
+      { 
+        name: 'Impact Investing', 
+        members: '1.1k', 
+        membersCount: 1100, 
+        revenue: 4300000, 
+        circulation: 55000,
+        cost: 250, 
+        dealFlow: 71, 
+        color: 'violet',
+        openPositions: 9
+      }
     ]
   },
   {
-    name: 'Music Business',
-    communities: [
-      { name: 'Licensing Guild', members: '1.8k', membersCount: 1800, revenue: 430000, cost: 350, activity: 76, color: 'amber' },
-      { name: 'Sync Opportunities', members: '760', membersCount: 760, revenue: 280000, cost: 250, activity: 82, color: 'emerald' },
-      { name: 'Rights Management', members: '1.2k', membersCount: 1200, revenue: 155000, cost: 0, activity: 68, color: 'violet' }
+    name: 'Platforms',
+    ecosystems: [
+      { 
+        name: 'SaaS Ecosystem', 
+        members: '2.6k', 
+        membersCount: 2600, 
+        revenue: 7400000, 
+        circulation: 110000,
+        cost: 300, 
+        dealFlow: 87, 
+        color: 'cyan',
+        openPositions: 29
+      },
+      { 
+        name: 'Marketplace Builders', 
+        members: '1.8k', 
+        membersCount: 1800, 
+        revenue: 5200000, 
+        circulation: 78000,
+        cost: 200, 
+        dealFlow: 82, 
+        color: 'amber',
+        openPositions: 20
+      },
+      { 
+        name: 'Open Source Network', 
+        members: '3.2k', 
+        membersCount: 3200, 
+        revenue: 1950000, 
+        circulation: 32000,
+        cost: 0, 
+        dealFlow: 93, 
+        color: 'emerald',
+        openPositions: 41
+      }
     ]
   }
 ])
@@ -207,38 +345,40 @@ onMounted(() => {
   activeCategory.value = 0
 })
 
-const filteredCommunities = (communities) => {
-  return communities.filter(community => {
+const filteredEcosystems = (ecosystems) => {
+  return ecosystems.filter(ecosystem => {
     // Text search filter
-    const textMatch = community.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const textMatch = ecosystem.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     
-    // Revenue filter
-    const revenueMatch = community.revenue >= filters.minRevenue
+    // Network worth filter
+    const revenueMatch = ecosystem.revenue >= filters.minRevenue
     
     // Cost filter
-    const costMatch = community.cost <= filters.maxCost
+    const costMatch = ecosystem.cost <= filters.maxCost
+    
+    // Circulation filter (new)
+    const circulationMatch = ecosystem.circulation >= filters.minCirculation
     
     // Size filter
     let sizeMatch = true
     if (filters.size) {
-      if (filters.size === 'small' && community.membersCount >= 1000) sizeMatch = false
-      if (filters.size === 'medium' && (community.membersCount < 1000 || community.membersCount >= 2000)) sizeMatch = false
-      if (filters.size === 'large' && community.membersCount < 2000) sizeMatch = false
+      if (filters.size === 'micro' && ecosystem.membersCount >= 1500) sizeMatch = false
+      if (filters.size === 'small' && (ecosystem.membersCount < 1500 || ecosystem.membersCount >= 3000)) sizeMatch = false
+      if (filters.size === 'large' && ecosystem.membersCount < 3000) sizeMatch = false
     }
     
-    return textMatch && revenueMatch && costMatch && sizeMatch
+    return textMatch && revenueMatch && costMatch && circulationMatch && sizeMatch
   })
 }
 
 const toggleCategory = (index) => {
-  // If clicking on already active category, close it (set to null)
-  // Otherwise set the active category to the clicked index
   activeCategory.value = activeCategory.value === index ? null : index
 }
 
 const resetFilters = () => {
   filters.minRevenue = 0
   filters.maxCost = 10000
+  filters.minCirculation = 0
   filters.size = null
   searchQuery.value = ''
 }

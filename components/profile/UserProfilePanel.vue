@@ -1,7 +1,7 @@
 <template>
   <div class="user-profile-panel w-full max-w-md mx-auto rounded-xl overflow-hidden">
     <!-- Background gradient -->
-    <div class="relative bg-gradient-to-b from-blue-900 to-purple-900 p-6 pt-10">
+    <div class="relative bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 p-6 pt-10">
       
       <!-- Profile Header -->
       <div class="flex flex-col items-center mb-6">
@@ -14,9 +14,6 @@
           />
         </div>
         <h1 class="text-white text-2xl font-bold">{{ props.userName }}</h1>
-        <div class="mt-3 text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-          ${{ formatNumber(props.wealthAmount) }}
-        </div>
       </div>
       
       <!-- Rating Indicator -->
@@ -27,7 +24,7 @@
             <circle 
               cx="50" cy="50" r="45" 
               fill="none" 
-              stroke="rgba(59, 130, 246, 0.2)" 
+              stroke="rgba(59, 130, 246, 0.1)" 
               stroke-width="8"
             />
             <circle 
@@ -67,20 +64,19 @@
               </div>
             </div>
             
-            <!-- Rating value -->
+            <!-- Wealth value -->
             <div class="relative z-10 flex flex-col items-center justify-center">
-              <span class="text-3xl font-bold text-white">{{ parseFloat(props.rating).toFixed(1) }}</span>
+              <span class="text-3xl font-bold text-white">${{ formatNumber(props.wealthAmount) }}</span>
             </div>
           </div>
         </div>
-        <p class="text-blue-300 mt-2">Envalumental Wealth</p>
       </div>
       
       <!-- Skills Button -->
-      <div class="flex justify-center mb-6">
+      <div class="flex justify-center mb-6 space-x-4">
         <button 
           @click="$emit('show-skills')" 
-          class="flex items-center px-4 py-2 bg-blue-700/50 hover:bg-blue-600/50 rounded-lg text-white transition-colors border border-blue-500/30 mr-2"
+          class="flex items-center px-4 py-2 bg-blue-700/30 hover:bg-blue-600/40 rounded-lg text-white transition-colors border border-blue-500/30 backdrop-blur-sm"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -90,7 +86,7 @@
         
         <NuxtLink 
           to="/skills" 
-          class="flex items-center px-4 py-2 bg-blue-600/30 hover:bg-blue-600/50 rounded-lg text-white transition-colors border border-blue-500/30"
+          class="flex items-center px-4 py-2 bg-purple-600/30 hover:bg-purple-500/40 rounded-lg text-white transition-colors border border-purple-500/30 backdrop-blur-sm"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -100,10 +96,10 @@
       </div>
       
       <!-- Navigation Bar -->
-      <div class="flex justify-around items-center pt-4 pb-2 border-t border-blue-800">
+      <div class="flex justify-around items-center pt-4 pb-2 border-t border-blue-800/50">
         <button 
           class="flex flex-col items-center px-4 py-2 text-blue-400 hover:text-white transition-colors" 
-          :class="{ 'text-white': activeTab === 'dashboard' }"
+          :class="{ 'text-white font-semibold': activeTab === 'dashboard' }"
           @click="setActiveTab('dashboard')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,7 +109,7 @@
         </button>
         <button 
           class="flex flex-col items-center px-4 py-2 text-blue-400 hover:text-white transition-colors" 
-          :class="{ 'text-white': activeTab === 'documentation' }"
+          :class="{ 'text-white font-semibold': activeTab === 'documentation' }"
           @click="setActiveTab('documentation')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,7 +119,7 @@
         </button>
         <button 
           class="flex flex-col items-center px-4 py-2 text-blue-400 hover:text-white transition-colors" 
-          :class="{ 'text-white': activeTab === 'value' }"
+          :class="{ 'text-white font-semibold': activeTab === 'value' }"
           @click="setActiveTab('value')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +129,7 @@
         </button>
         <button 
           class="flex flex-col items-center px-4 py-2 text-blue-400 hover:text-white transition-colors" 
-          :class="{ 'text-white': activeTab === 'profile' }"
+          :class="{ 'text-white font-semibold': activeTab === 'profile' }"
           @click="setActiveTab('profile')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,7 +144,7 @@
         <div v-for="(tab, index) in tabs" :key="tab" 
           class="h-1 rounded-full transition-all duration-300 ease-in-out"
           :class="[
-            activeTab === tab ? 'w-8 bg-blue-400' : 'w-3 bg-blue-800',
+            activeTab === tab ? 'w-8 bg-gradient-to-r from-blue-400 to-purple-400' : 'w-3 bg-blue-800/50',
           ]"
         ></div>
       </div>
@@ -157,11 +153,11 @@
       <div class="mt-6">
         <!-- Documentation Tab Panel - Assessments List -->
         <div v-if="activeTab === 'documentation'" class="px-2 py-4">
-          <h3 class="text-lg font-semibold text-white mb-4">Envalumental Assessments</h3>
+          <h3 class="text-lg font-semibold text-blue-300 mb-4">Envalumental Assessments</h3>
           
           <div v-if="assessmentList.length > 0" class="space-y-4">
             <div v-for="(assessment, index) in assessmentList" :key="index" 
-              class="bg-blue-900/30 p-4 rounded-lg border border-blue-800/50"
+              class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm"
             >
               <div class="flex justify-between items-start mb-2">
                 <div>
@@ -213,10 +209,10 @@
         
         <!-- Value Tab Content (Previously Wallet) -->
         <div v-if="activeTab === 'value'" class="px-2 py-4">
-          <h3 class="text-lg font-semibold text-white mb-4">Value Breakdown</h3>
+          <h3 class="text-lg font-semibold text-blue-300 mb-4">Value Breakdown</h3>
           
           <div class="space-y-4">
-            <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-800/50">
+            <div class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm">
               <div class="flex justify-between items-center mb-3">
                 <div class="font-medium text-white">Total Envalumental Wealth</div>
                 <div class="text-xl font-semibold text-blue-300">${{ formatNumber(props.wealthAmount) }}</div>
@@ -243,7 +239,7 @@
               </div>
             </div>
             
-            <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-800/50">
+            <div class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm">
               <div class="text-sm font-medium text-white mb-2">Recent Activity</div>
               
               <div class="space-y-2">
@@ -385,7 +381,7 @@ const assessmentList = [
 
 <style scoped>
 .user-profile-panel {
-  box-shadow: 0 4px 20px rgba(0, 0, 255, 0.2);
+  box-shadow: 0 6px 30px rgba(0, 0, 150, 0.25);
 }
 
 .star {

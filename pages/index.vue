@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
+  <div class="relative min-h-screen w-full bg-gray-950 text-white overflow-x-hidden">
     <canvas id="background-canvas" class="absolute inset-0 -z-10"></canvas>
     
     <!-- Header -->
@@ -77,7 +77,7 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 bg-gray-900/50 relative">
+    <section id="about" class="py-20 bg-gray-950/80 relative">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto text-center mb-16">
           <h2 class="text-3xl font-bold mb-4">About NIEA</h2>
@@ -150,7 +150,7 @@
     </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 bg-gray-900/50 relative">
+    <section id="how-it-works" class="py-20 bg-gray-950/80 relative">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto text-center mb-16">
           <h2 class="text-3xl font-bold mb-4">How It Works</h2>
@@ -322,7 +322,7 @@
     </section>
 
     <!-- Get Involved Section -->
-    <section id="get-involved" class="py-20 bg-gray-900/50 relative overflow-hidden">
+    <section id="get-involved" class="py-20 bg-gray-950/80 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-cyan-900/20"></div>
       <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
       

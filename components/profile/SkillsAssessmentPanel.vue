@@ -78,7 +78,7 @@
               
               <!-- Rating value -->
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-xl font-bold text-white">{{ selectedSkill.rating.toFixed(1) }}</span>
+                <span class="text-xl font-bold text-white">{{ convertToLetterGrade(selectedSkill.rating) }}</span>
               </div>
             </div>
             <div>
@@ -226,6 +226,14 @@ const calculateDashOffset = (radius, percentage) => {
 
 const formatNumber = (num) => {
   return new Intl.NumberFormat('en-US').format(num);
+};
+
+const convertToLetterGrade = (rating) => {
+  if (rating >= 4.5) return 'A';
+  if (rating >= 3.5) return 'B';
+  if (rating >= 2.5) return 'C';
+  if (rating >= 1.5) return 'D';
+  return 'F';
 };
 </script>
 

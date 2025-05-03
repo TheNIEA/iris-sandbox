@@ -255,7 +255,7 @@
               
               <!-- User Assessments (if any) -->
               <div v-if="userSkillAssessments[selectedSkill.id] && userSkillAssessments[selectedSkill.id].length > 0">
-                <h4 class="text-lg font-medium text-blue-300 mb-3">Your Assessments</h4>
+                <h4 class="text-lg font-medium text-blue-300 mb-3">Khoury's Assessments</h4>
                 
                 <div class="space-y-4">
                   <div 

@@ -17,6 +17,7 @@
         />
       </transition>
       
+      <!-- 
       <div class="mt-8 p-6 bg-gray-800 rounded-xl text-white" v-if="currentView === 'profile'">
         <h2 class="text-xl font-bold mb-4">About Envalumental Wealth</h2>
         <p class="text-gray-300 mb-4">
@@ -40,6 +41,7 @@
           </button>
         </div>
       </div>
+    -->
     </div>
   </div>
 </template>

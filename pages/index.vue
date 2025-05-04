@@ -10,6 +10,14 @@
             <img src="https://s3.us-east-2.amazonaws.com/theniea.com/TheNIEA-icon.png" alt="NIEA Logo" class="h-12 w-auto mr-3" />
             <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">NIEA</span>
           </div>
+          
+          <!-- Add signup link with + circle -->
+          <NuxtLink to="/signup" class="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-500 hover:to-blue-700 text-white shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </NuxtLink>
+          
           <nav class="hidden md:flex space-x-8">
             <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
             <a href="#components" class="text-gray-300 hover:text-white transition-colors">Components</a>
@@ -27,6 +35,13 @@
         </div>
       </div>
     </header>
+
+    <!-- + Circle Link to Signup -->
+    <NuxtLink to="/signup" class="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all hover:scale-110">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+    </NuxtLink>
 
     <!-- Hero Section -->
     <section class="relative pt-20 pb-32 overflow-hidden">

@@ -16,6 +16,7 @@
       <!-- Background gradient -->
       <div v-else class="relative bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 p-6 pt-10">
         
+
         <!-- Profile Header -->
         <div class="flex flex-col items-center mb-6">
           <div class="relative w-24 h-24 mb-4">
@@ -117,7 +118,32 @@
             </div>
           </div>
         </div>
-        
+
+        <!-- Draggable Tab (Positioned fixed on the screen instead of relative to content) -->
+        <div
+          ref="dragContainer"
+          v-if="activeTab === 'dashboard'"
+          class="fixed top-1/4 right-2 transform -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing"
+          :class="{ 'transition-transform duration-300 ease-out': !isDragging }"
+          :style="{ transform: `translateX(calc(100% - 30px + ${dragPosition}px))` }"
+          @mousedown="startDrag"
+          @touchstart.prevent="startDrag"
+        >
+          <!-- The Rounded Rectangle Tab -->
+          <div class="flex items-center h-16 w-48 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-l-xl shadow-lg pl-3 pr-4">
+            <!-- Grip area / Icon -->
+            <div class="flex items-center justify-center h-full w-8 mr-1 text-white/70 flex-shrink-0">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+               </svg>
+            </div>
+            <!-- Text -->
+            <span class="text-white font-medium whitespace-nowrap text-sm overflow-hidden">
+              Make New Profile
+            </span>
+          </div>
+        </div>
+
         <!-- Envalument Info Popup -->
         <div v-if="showEnvalumentInfo" class="fixed inset-0 flex items-center justify-center z-50" @click.self="showEnvalumentInfo = false">
           <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -132,7 +158,11 @@
             </div>
             <div class="mt-4 text-sm text-gray-300 space-y-3">
               <p>
-                <span class="font-medium text-blue-300">Envalument</span> is our platform's virtual currency representing your estimated net worth in USD based on your skills, contributions, and market value.
+                <span class="font-medium text-blue-300">Envalument</span> is the stored potential value of an individual's contributions to society—such as knowledge sharing, community service, innovation, caregiving, and other socially beneficial actions. Envalument is earned through the recording, verification, and storage of these interactions, which are transformed into measurable and transferable economic value. This value is rewarded using a decentralized digital currency system, enabling individuals to build envalumental wealth through the use of social value incentives.
+                Unlike traditional labor economics, which places value on productivity alone, the National Information Exchange Agency (NIEA) empowers businesses, organizations, and local governments to implement systems that reward personal growth, societal impact, and collective improvement.
+              </p>
+              <p>
+                This platform uses leading currencies to represent your estimated envalumental worth based on listed skills, contributions, and community value.
               </p>
               <p>
                 Your Envalument score is calculated using a proprietary algorithm that considers:
@@ -140,8 +170,8 @@
               <ul class="list-disc pl-5 space-y-1">
                 <li>Your skill assessments and proficiency levels</li>
                 <li>Completed projects and their impact</li>
-                <li>Market demand for your expertise</li>
-                <li>Community engagement and reputation</li>
+                <li>Community demand for your expertise</li>
+                <li>Overall engagement and reputation</li>
               </ul>
               <p class="italic text-blue-300/80 text-xs mt-2">
                 Note: Envalument is for informational purposes only and does not represent real currency or financial assets.
@@ -405,7 +435,7 @@
           
           <!-- Value Tab Content -->
           <div v-if="activeTab === 'value'" class="px-2 py-4">
-            <h3 class="text-lg font-semibold text-blue-300 mb-4">Value Breakdown</h3>
+            <h3 class="text-lg font-semibold text-blue-300 mb-4">Khoury's Value Breakdown</h3>
             
             <div class="space-y-4">
               <!-- Wealth information card -->
@@ -521,11 +551,19 @@
           </div>
         </div>
       </div>
+      
+      <!-- Overlay that gets darker as slider is dragged -->
+      <div 
+        v-if="activeTab === 'dashboard' && dragPosition < 0" 
+        class="fixed inset-0 bg-black transition-opacity z-10"
+        :style="{ opacity: darkOverlayOpacity }"
+      ></div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import SkillsAssessmentPanel from './SkillsAssessmentPanel.vue';
 import TicketQueuePanel from './TicketQueuePanel.vue';
 
@@ -704,6 +742,107 @@ const showAssessmentPanel = ref(false);
 const currentSkillId = ref('');
 const showTicketQueue = ref(false);
 const showEnvalumentInfo = ref(false);
+const isDragging = ref(false); // Added dragging state for transition control
+const dragContainer = ref(null); // Added ref for the draggable container
+const maxNegativeDrag = ref(0); // Added ref for max drag distance
+
+// Calculate max drag distance based on window size
+const calculateMaxDrag = () => {
+  const peekAmount = 30; // How much the tab is visible initially (in px)
+  // Calculate the drag distance needed for the tab's left edge to reach the center
+  // This assumes the tab's width is w-48 (192px). Adjust if width changes.
+  const tabWidth = 192;
+  // Target left position = window.innerWidth / 2
+  // Initial left position = window.innerWidth - peekAmount
+  // Required movement = Target - Initial = (window.innerWidth / 2) - (window.innerWidth - peekAmount)
+  maxNegativeDrag.value = peekAmount - window.innerWidth / 2;
+  // Ensure it's negative
+  if (maxNegativeDrag.value > 0) maxNegativeDrag.value = -100; // Fallback if calculation is off
+};
+
+// Recalculate on mount and resize
+onMounted(() => {
+  calculateMaxDrag();
+  window.addEventListener('resize', calculateMaxDrag);
+});
+
+// Define these functions here so they can be removed in onUnmounted/onMouseUp
+let onDrag = null;
+let onMouseUp = null;
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateMaxDrag);
+  // Ensure drag listeners are removed if component unmounts during drag
+  window.removeEventListener('mousemove', onDrag);
+  window.removeEventListener('mouseup', onMouseUp);
+  window.removeEventListener('touchmove', onDrag);
+  window.removeEventListener('touchend', onMouseUp);
+});
+
+
+// Draggable button state
+const dragPosition = ref(0); // Represents the offset from the initial "peaking" state
+
+// Remove revealTextOpacity as text is always visible on the tab
+// const revealTextOpacity = computed(() => { ... });
+
+// Update darkOverlayOpacity calculation based on max drag distance
+const darkOverlayOpacity = computed(() => {
+  const progress = maxNegativeDrag.value !== 0 ? Math.abs(dragPosition.value) / Math.abs(maxNegativeDrag.value) : 0;
+  return Math.min(progress * 0.8, 0.8); // Scale opacity up to 0.8
+});
+
+const router = useRouter();
+
+const startDrag = (event) => {
+  // Prevent default drag behavior (like image dragging)
+  if (event.cancelable) event.preventDefault();
+
+  isDragging.value = true; // Start dragging state
+  calculateMaxDrag(); // Ensure max drag is current
+
+  const initialX = event.type === 'mousedown' ? event.clientX : event.touches[0].clientX;
+  const initialPosition = dragPosition.value;
+
+  onDrag = (moveEvent) => {
+    // Prevent scrolling on touch devices during drag
+    if (moveEvent.cancelable) moveEvent.preventDefault();
+
+    const currentX = moveEvent.type === 'mousemove' ? moveEvent.clientX : moveEvent.touches[0].clientX;
+    const deltaX = currentX - initialX;
+    const newPosition = initialPosition + deltaX;
+
+    // Clamp position: only allow dragging left (negative) up to the max limit
+    dragPosition.value = Math.max(maxNegativeDrag.value, Math.min(0, newPosition));
+  };
+
+  onMouseUp = () => {
+    window.removeEventListener('mousemove', onDrag);
+    window.removeEventListener('mouseup', onMouseUp);
+    window.removeEventListener('touchmove', onDrag);
+    window.removeEventListener('touchend', onMouseUp);
+
+    isDragging.value = false; // End dragging state
+
+    // Trigger if dragged close to the maximum limit (e.g., 90% of the way)
+    if (dragPosition.value < maxNegativeDrag.value * 0.9) {
+      router.push('/signup');
+      // Keep it extended after navigation
+      dragPosition.value = maxNegativeDrag.value;
+    } else {
+      // Animate back to initial position (CSS transition handles this)
+      dragPosition.value = 0;
+    }
+    // Nullify functions after use
+    onDrag = null;
+    onMouseUp = null;
+  };
+
+  window.addEventListener('mousemove', onDrag);
+  window.addEventListener('mouseup', onMouseUp);
+  window.addEventListener('touchmove', onDrag, { passive: false }); // passive: false to allow preventDefault
+  window.addEventListener('touchend', onMouseUp);
+};
 
 // Handle returning back from TicketQueue
 function handleTicketQueueBack() {

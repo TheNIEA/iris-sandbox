@@ -21,7 +21,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
             </svg>
-            Enter Code
+            Enter Number
           </span>
         </button>
       </div>
@@ -49,14 +49,29 @@
       <div ref="ticketStubRef" class="relative cursor-grab" @mousedown="startDrag" @touchstart="startDrag">
         <!-- Ticket Stub UI -->
         <div :class="['ticket-stub', {'ticket-dragging': isDragging}]">
-          <div class="relative bg-gradient-to-r from-blue-600/20 to-purple-600/20 p-8 rounded-lg border border-blue-500/40 shadow-lg backdrop-blur-md text-center">
-            <div class="absolute top-3 left-3 right-3 flex justify-between">
+          <div class="relative bg-gradient-to-r from-blue-600/20 to-purple-600/20 p-8 rounded-lg border border-blue-500/40 shadow-lg backdrop-blur-md text-center" 
+               :style="ticketGradientStyle">
+            <!-- Left color overlay (blue) -->
+            <div 
+              v-show="dragDirection === 'left' && dragDistance > 0"
+              class="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/80 to-transparent pointer-events-none transition-opacity"
+              :style="{ opacity: Math.min(dragDistance / 150, 0.8) }"
+            ></div>
+            
+            <!-- Right color overlay (green) -->
+            <div 
+              v-show="dragDirection === 'right' && dragDistance > 0"
+              class="absolute inset-0 rounded-lg bg-gradient-to-l from-green-600/80 to-transparent pointer-events-none transition-opacity"
+              :style="{ opacity: Math.min(dragDistance / 150, 0.8) }"
+            ></div>
+            
+            <div class="absolute top-3 left-3 right-3 flex justify-between z-10">
               <div class="text-xs text-blue-300">#{{ nextTicketNumber }}</div>
               <div class="text-xs text-blue-300">{{ currentDate }}</div>
             </div>
             
             <!-- Ticket Content -->
-            <div class="py-6">
+            <div class="py-6 relative z-10">
               <div class="mb-4 text-gray-300 text-sm">Pull to interact</div>
               <div class="h-16 flex items-center justify-center">
                 <div class="ticket-icon text-white">
@@ -70,7 +85,7 @@
             </div>
             
             <!-- Perforation -->
-            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full">
+            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full z-10">
               <div class="ticket-perforation"></div>
             </div>
           </div>
@@ -645,6 +660,16 @@ onUnmounted(() => {
   window.removeEventListener('mouseup', endDrag);
   window.removeEventListener('touchmove', onDrag);
   window.removeEventListener('touchend', endDrag);
+});
+
+// Computed property for ticket gradient style based on drag direction
+const ticketGradientStyle = computed(() => {
+  if (!isDragging.value || dragDistance.value === 0) {
+    return {}; // Default style when not dragging
+  }
+  
+  // No additional styles needed since we're using overlay divs for the color effects
+  return {};
 });
 
 // Look up a ticket by code

@@ -5,7 +5,7 @@
       
       <!-- Header with title -->
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-white">Open Request</h1>
+        <h1 class="text-2xl font-bold text-white">Submit New Request</h1>
         <div class="mt-2 text-blue-300">
           Now Serving: <span class="text-xl font-semibold">#{{ currentTicketNumber }}</span>
         </div>
@@ -21,20 +21,20 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
             </svg>
-            Enter Number
+            Enter Request Number
           </span>
         </button>
       </div>
       
       <!-- Code Input (conditionally shown) -->
       <div v-if="showCodeInput" class="mb-8 p-4 bg-gray-900/50 backdrop-blur-md rounded-lg border border-blue-800/30">
-        <div class="mb-2 text-sm text-blue-300">Enter your ticket code:</div>
+        <div class="mb-2 text-sm text-blue-300">Enter your request number:</div>
         <div class="flex space-x-2">
           <input
             v-model="ticketCode"
             type="text"
             class="flex-1 px-3 py-2 bg-gray-800/80 border border-blue-700/30 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-            placeholder="Example: TK-123"
+            placeholder="Example: #12345"
           />
           <button
             @click="lookupTicket"
@@ -51,37 +51,53 @@
         <div :class="['ticket-stub', {'ticket-dragging': isDragging}]">
           <div class="relative bg-gradient-to-r from-blue-600/20 to-purple-600/20 p-8 rounded-lg border border-blue-500/40 shadow-lg backdrop-blur-md text-center" 
                :style="ticketGradientStyle">
-            <!-- Left color overlay (blue) -->
+            <!-- Left color overlay (blue) - Updated for better text visibility -->
             <div 
               v-show="dragDirection === 'left' && dragDistance > 0"
-              class="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/80 to-transparent pointer-events-none transition-opacity"
-              :style="{ opacity: Math.min(dragDistance / 150, 0.8) }"
+              class="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/80 via-blue-500/30 to-transparent pointer-events-none transition-opacity"
+              :style="{ opacity: Math.min(dragDistance / 150, 0.9) }"
             ></div>
             
-            <!-- Right color overlay (green) -->
+            <!-- Right color overlay (green) - Updated for better text visibility -->
             <div 
               v-show="dragDirection === 'right' && dragDistance > 0"
-              class="absolute inset-0 rounded-lg bg-gradient-to-l from-green-600/80 to-transparent pointer-events-none transition-opacity"
-              :style="{ opacity: Math.min(dragDistance / 150, 0.8) }"
+              class="absolute inset-0 rounded-lg bg-gradient-to-l from-green-600/80 via-green-500/30 to-transparent pointer-events-none transition-opacity"
+              :style="{ opacity: Math.min(dragDistance / 150, 0.9) }"
             ></div>
             
-            <div class="absolute top-3 left-3 right-3 flex justify-between z-10">
-              <div class="text-xs text-blue-300">#{{ nextTicketNumber }}</div>
-              <div class="text-xs text-blue-300">{{ currentDate }}</div>
+            <!-- Ticket Content with improved z-index and text shadow for better readability -->
+            <div class="absolute top-3 left-3 right-3 flex justify-between z-20">
+              <div class="text-xs text-blue-300 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">#{{ nextTicketNumber }}</div>
+              <div class="text-xs text-blue-300 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">{{ currentDate }}</div>
             </div>
             
-            <!-- Ticket Content -->
-            <div class="py-6 relative z-10">
-              <div class="mb-4 text-gray-300 text-sm">Pull to interact</div>
+            <!-- Ticket Content with higher z-index and text shadows -->
+            <div class="py-6 relative z-20">
+              <div class="mb-4 text-gray-300 text-sm drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Pull to interact</div>
               <div class="h-16 flex items-center justify-center">
-                <div class="ticket-icon text-white">
+                <div class="ticket-icon text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                   </svg>
                 </div>
               </div>
-              <div class="text-white font-semibold">Envalument Service</div>
-              <div class="text-xs text-blue-300 mt-1">Pull right to request - Pull left to view</div>
+              <div class="text-white font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]">Envalument Service</div>
+              
+              <!-- Action options directly on the card instead of in side overlays -->
+              <div class="flex justify-between items-center mt-4 text-xs">
+                <div class="flex items-center px-3 py-1.5 bg-blue-600/40 rounded-lg drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>View Open Requests</span>
+                </div>
+                <div class="flex items-center px-3 py-1.5 bg-green-600/40 rounded-lg drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] text-white">
+                  <span>Request a Service</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </div>
             
             <!-- Perforation -->
@@ -91,39 +107,12 @@
           </div>
         </div>
         
-        <!-- Left side reveal (View All Tickets) -->
-        <div 
-          :class="['ticket-overlay left-overlay', {'active': dragDirection === 'left' && dragDistance > 50}]"
-        >
-          <div class="bg-blue-600/80 h-full rounded-l-lg flex items-center justify-center px-6">
-            <div class="text-center text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <div>View All Tickets</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Right side reveal (Request a Task) -->
-        <div 
-          :class="['ticket-overlay right-overlay', {'active': dragDirection === 'right' && dragDistance > 50}]"
-        >
-          <div class="bg-green-600/80 h-full rounded-r-lg flex items-center justify-center px-6">
-            <div class="text-center text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>Request a Task</div>
-            </div>
-          </div>
-        </div>
       </div>
       
       <!-- View All Tickets Panel (shown when pulled left) -->
       <div v-if="showTicketList" class="mt-8 p-4 bg-gray-900/50 backdrop-blur-md rounded-lg border border-blue-800/30">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-white">Open Tickets</h3>
+          <h3 class="text-lg font-semibold text-white">Request In Queue</h3>
           <button @click="showTicketList = false" class="text-blue-300 hover:text-white">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -132,7 +121,7 @@
         </div>
         
         <div v-if="tickets.length === 0" class="text-center py-6 text-gray-400">
-          No open tickets
+          No open requests
         </div>
         
         <div v-else class="space-y-3">
@@ -231,7 +220,7 @@
             </div>
 
             <div v-if="selectedTicket.requiredDeliverables">
-              <div class="text-sm text-blue-300">Required Deliverables</div>
+              <div class="text-sm text-blue-300">Requested Deliverables</div>
               <div class="text-white bg-gray-800/50 p-3 rounded whitespace-pre-line">
                 {{ selectedTicket.requiredDeliverables }}
               </div>
@@ -252,10 +241,16 @@
             
             <!-- Action buttons -->
             <div class="pt-4 flex space-x-3">
-              <button class="flex-1 py-2 px-4 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white">
+              <button 
+                @click="showStatusUpdateForm = true" 
+                class="flex-1 py-2 px-4 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white"
+              >
                 Update Status
               </button>
-              <button class="flex-1 py-2 px-4 bg-red-600/80 hover:bg-red-500/80 rounded text-white">
+              <button 
+                @click="showCancelForm = true" 
+                class="flex-1 py-2 px-4 bg-red-600/80 hover:bg-red-500/80 rounded text-white"
+              >
                 Cancel Request
               </button>
             </div>
@@ -263,10 +258,194 @@
         </div>
       </div>
       
+      <!-- Status Update Form Popup -->
+      <div v-if="showStatusUpdateForm" class="fixed inset-0 flex items-center justify-center z-50 bg-black/70 overflow-y-auto py-8">
+        <div class="bg-gray-900 p-6 rounded-lg border border-blue-500/50 shadow-lg max-w-xl w-full mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Update Status: Ticket #{{ selectedTicket.id }}</h3>
+            <button @click="showStatusUpdateForm = false" class="text-blue-300 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <form @submit.prevent="submitStatusUpdate" class="space-y-4">
+            <!-- Status Dropdown -->
+            <div>
+              <label class="block text-sm font-medium text-blue-300 mb-1">Status</label>
+              <select 
+                v-model="statusUpdateForm.status" 
+                class="w-full p-2 bg-gray-800/50 text-white rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="Pending">Pending</option>
+                <option value="In Review">In Review</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Complete">Complete</option>
+              </select>
+            </div>
+            
+            <!-- Comment Box -->
+            <div>
+              <label class="block text-sm font-medium text-blue-300 mb-1">Status Update Comments</label>
+              <textarea 
+                v-model="statusUpdateForm.comment" 
+                rows="3" 
+                class="w-full p-2 bg-gray-800/50 text-white rounded resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder="Provide details about this status update..."
+              ></textarea>
+            </div>
+            
+            <!-- Attachments -->
+            <div>
+              <label class="block text-sm font-medium text-blue-300 mb-1">Add Attachments (optional)</label>
+              <div class="flex items-center justify-center w-full">
+                <label class="flex flex-col w-full h-24 border-2 border-dashed border-blue-300/30 hover:border-blue-300/60 rounded-lg cursor-pointer bg-gray-800/30 hover:bg-gray-800/50 transition-colors">
+                  <div class="flex flex-col items-center justify-center pt-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="pt-1 text-xs text-blue-300">
+                      <span class="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+                  </div>
+                  <input @change="handleStatusFileUpload" type="file" multiple class="hidden" />
+                </label>
+              </div>
+              
+              <!-- Uploaded files preview -->
+              <div v-if="statusUpdateForm.attachments && statusUpdateForm.attachments.length > 0" class="mt-2 flex flex-wrap gap-2">
+                <div 
+                  v-for="(file, index) in statusUpdateForm.attachments" 
+                  :key="index" 
+                  class="bg-gray-800 px-2 py-1 rounded flex items-center text-sm group"
+                >
+                  <span class="text-blue-300 truncate max-w-[150px]">{{ file.name }}</span>
+                  <button 
+                    @click.prevent="removeStatusFile(index)" 
+                    class="ml-2 text-gray-400 hover:text-red-400"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-3">
+              <button 
+                type="button" 
+                @click="showStatusUpdateForm = false" 
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Cancel Request Form Popup -->
+      <div v-if="showCancelForm" class="fixed inset-0 flex items-center justify-center z-50 bg-black/70 overflow-y-auto py-8">
+        <div class="bg-gray-900 p-6 rounded-lg border border-red-500/50 shadow-lg max-w-xl w-full mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Cancel Request: Ticket #{{ selectedTicket.id }}</h3>
+            <button @click="showCancelForm = false" class="text-blue-300 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="mb-6 p-3 bg-red-900/20 border border-red-800/30 rounded-lg">
+            <p class="text-gray-300 text-sm">
+              <span class="text-red-400 font-medium">Note:</span> Canceling this request will notify the requester via email. Please provide a reason for cancellation.
+            </p>
+          </div>
+          
+          <form @submit.prevent="submitCancellation" class="space-y-4">
+            <!-- Comment Box -->
+            <div>
+              <label class="block text-sm font-medium text-blue-300 mb-1">Cancellation Reason</label>
+              <textarea 
+                v-model="cancellationForm.reason" 
+                rows="4" 
+                class="w-full p-2 bg-gray-800/50 text-white rounded resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder="Explain why this request is being canceled..."
+                required
+              ></textarea>
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-3">
+              <button 
+                type="button" 
+                @click="showCancelForm = false" 
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white"
+              >
+                Go Back
+              </button>
+              <button 
+                type="submit" 
+                class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded text-white"
+              >
+                Confirm Cancellation
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Status Update Success Message -->
+      <div v-if="showStatusUpdateSuccess" class="fixed inset-0 flex items-center justify-center z-50 bg-black/70">
+        <div class="bg-gray-900 p-6 rounded-lg border border-green-500/50 shadow-lg max-w-sm w-full">
+          <div class="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <h3 class="text-xl text-white font-semibold mb-2">Status Updated!</h3>
+            <p class="text-gray-300 mb-4">The ticket status has been successfully updated.</p>
+            <button 
+              @click="showStatusUpdateSuccess = false" 
+              class="px-5 py-2 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white w-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cancellation Success Message -->
+      <div v-if="showCancellationSuccess" class="fixed inset-0 flex items-center justify-center z-50 bg-black/70">
+        <div class="bg-gray-900 p-6 rounded-lg border border-green-500/50 shadow-lg max-w-sm w-full">
+          <div class="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <h3 class="text-xl text-white font-semibold mb-2">Request Canceled</h3>
+            <p class="text-gray-300 mb-4">The request has been canceled and an email notification has been sent to the requester.</p>
+            <button 
+              @click="showCancellationSuccess = false" 
+              class="px-5 py-2 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white w-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- New Ticket Form (shown when "Request Assistance" is clicked) -->
       <div v-if="showRequestForm" class="mt-8 p-4 bg-gray-900/50 backdrop-blur-md rounded-lg border border-blue-800/30">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-white">New Support Ticket</h3>
+          <h3 class="text-lg font-semibold text-white">New Support Request</h3>
           <button @click="showRequestForm = false" class="text-blue-300 hover:text-white">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -301,7 +480,7 @@
               v-model="newTicket.title" 
               type="text" 
               class="w-full p-2 bg-gray-800/50 text-white rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Brief description of the issue"
+              placeholder="Brief description of the request"
             >
           </div>
           
@@ -311,17 +490,17 @@
               v-model="newTicket.description" 
               rows="3" 
               class="w-full p-2 bg-gray-800/50 text-white rounded resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Detailed explanation of the issue..."
+              placeholder="Detailed explanation of the request..."
             ></textarea>
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-blue-300 mb-1">Required Deliverables</label>
+            <label class="block text-sm font-medium text-blue-300 mb-1">Requested Deliverables</label>
             <textarea 
               v-model="newTicket.requiredDeliverables" 
               rows="2" 
               class="w-full p-2 bg-gray-800/50 text-white rounded resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="List all required deliverables..."
+              placeholder="Outline exactly what you want..."
             ></textarea>
           </div>
 
@@ -473,6 +652,10 @@ const currentDate = ref('');
 // For ticket detail popup
 const showTicketDetailPopup = ref(false);
 const selectedTicket = ref({});
+const showStatusUpdateForm = ref(false);
+const showCancelForm = ref(false);
+const showStatusUpdateSuccess = ref(false);
+const showCancellationSuccess = ref(false);
 
 // Ticket list data
 const tickets = ref([
@@ -743,6 +926,67 @@ const submitTicket = () => {
   // Show success message and close form
   showRequestForm.value = false;
   showSuccessMessage.value = true;
+};
+
+// Status update form
+const statusUpdateForm = ref({
+  status: '',
+  comment: '',
+  attachments: []
+});
+
+// Handle status file uploads
+const handleStatusFileUpload = (event) => {
+  const files = Array.from(event.target.files);
+  const validFiles = files.filter(file => file.size <= 10 * 1024 * 1024); // 10MB limit
+  
+  if (!statusUpdateForm.value.attachments) {
+    statusUpdateForm.value.attachments = [];
+  }
+  
+  statusUpdateForm.value.attachments.push(...validFiles);
+};
+
+// Remove a file from status attachments
+const removeStatusFile = (index) => {
+  statusUpdateForm.value.attachments.splice(index, 1);
+};
+
+// Submit status update
+const submitStatusUpdate = () => {
+  // In a real application, this would be an API call to update the ticket status
+  selectedTicket.value.status = statusUpdateForm.value.status;
+  
+  // Reset form
+  statusUpdateForm.value = {
+    status: '',
+    comment: '',
+    attachments: []
+  };
+  
+  // Show success message and close form
+  showStatusUpdateForm.value = false;
+  showStatusUpdateSuccess.value = true;
+};
+
+// Cancellation form
+const cancellationForm = ref({
+  reason: ''
+});
+
+// Submit cancellation
+const submitCancellation = () => {
+  // In a real application, this would be an API call to cancel the ticket
+  selectedTicket.value.status = 'Canceled';
+  
+  // Reset form
+  cancellationForm.value = {
+    reason: ''
+  };
+  
+  // Show success message and close form
+  showCancelForm.value = false;
+  showCancellationSuccess.value = true;
 };
 </script>
 

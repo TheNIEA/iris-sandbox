@@ -130,7 +130,7 @@
           @touchstart.prevent="startDrag"
         >
           <!-- The Rounded Rectangle Tab -->
-          <div class="flex items-center h-16 w-48 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-l-xl shadow-lg pl-3 pr-4">
+          <div class="flex items-center h-16 w-64 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-l-xl shadow-lg pl-3 pr-4">
             <!-- Grip area / Icon -->
             <div class="flex items-center justify-center h-full w-8 mr-1 text-white/70 flex-shrink-0">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,7 +139,7 @@
             </div>
             <!-- Text -->
             <span class="text-white font-medium whitespace-nowrap text-sm overflow-hidden">
-              Make New Profile
+              Start Your Profile
             </span>
           </div>
         </div>
@@ -152,7 +152,7 @@
               <h3 class="text-xl font-bold text-blue-300">About Envalument</h3>
               <button @click="showEnvalumentInfo = false" class="text-gray-400 hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
                 </svg>
               </button>
             </div>
@@ -171,10 +171,10 @@
                 <li>Your skill assessments and proficiency levels</li>
                 <li>Completed projects and their impact</li>
                 <li>Community demand for your expertise</li>
-                <li>Overall engagement and reputation</li>
+                <li>Overall engagement and contribution</li>
               </ul>
               <p class="italic text-blue-300/80 text-xs mt-2">
-                Note: Envalument is for informational purposes only and does not represent real currency or financial assets.
+                Note: Envalument is for informational purposes only and does not yet represent real currency or financial assets.
               </p>
             </div>
           </div>
@@ -194,7 +194,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform" 
                 :class="{'transform rotate-180': showSkillsAccordion}"
                 viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
               </svg>
             </button>
           </div>
@@ -246,7 +246,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 transition-transform" 
                     :class="{'transform rotate-180': expandedSkill === skill.id}" 
                     viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
                   </svg>
                 </div>
               </div>
@@ -284,7 +284,7 @@
                     
                     <div class="flex justify-between text-xs">
                       <div>
-                        <span class="text-gray-500">Contribution:</span>
+                        <span class="text-gray-500">Envalumental Worth: </span>
                         <span :class="skill.category === 'Design' 
                           ? 'text-blue-300' 
                           : 'text-purple-300'"
@@ -355,13 +355,13 @@
           </button>
           <button 
             class="flex flex-col items-center px-4 py-2 text-blue-400 hover:text-white transition-colors" 
-            :class="{ 'text-white font-semibold': activeTab === 'profile' }"
-            @click="setActiveTab('profile')"
+            :class="{ 'text-white font-semibold': activeTab === 'service' }"
+            @click="setActiveTab('service')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            <span class="text-xs mt-1">Profile</span>
+            <span class="text-xs mt-1">Service</span>
           </button>
         </div>
         
@@ -377,46 +377,96 @@
         
         <!-- Tab Content Panels -->
         <div class="mt-6">
-          <!-- Documentation Tab Panel - Assessments List -->
+          <!-- Documentation Tab Panel (now Records Tab) - Mixed list of assessments and completed tickets -->
           <div v-if="activeTab === 'documentation'" class="px-2 py-4">
             <h3 class="text-lg font-semibold text-blue-300 mb-4">Envalumental Records</h3>
             
-            <div v-if="assessmentList.length > 0" class="space-y-4">
-              <div v-for="(assessment, index) in assessmentList" :key="index" 
+            <div v-if="combinedRecords.length > 0" class="space-y-4">
+              <!-- Show first two items only initially -->
+              <div v-for="(record, index) in showAllRecords ? combinedRecords : combinedRecords.slice(0, 2)" :key="index" 
                 class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm"
+                :class="{'border-l-4': record.type === 'ticket', 'border-l-blue-500': record.type === 'ticket'}"
               >
+                <!-- Record Type Badge -->
                 <div class="flex justify-between items-start mb-2">
                   <div>
-                    <h4 class="font-medium text-white">{{ assessment.skill }}</h4>
-                    <p class="text-sm text-blue-300">by {{ assessment.user }}</p>
+                    <div class="flex items-center">
+                      <h4 class="font-medium text-white">{{ record.title || record.skill }}</h4>
+                      <span v-if="record.type === 'ticket'" class="ml-2 text-xs px-2 py-0.5 bg-blue-500/30 rounded-full text-blue-300">Service</span>
+                      <span v-else class="ml-2 text-xs px-2 py-0.5 bg-purple-500/30 rounded-full text-purple-300">Assessment</span>
+                    </div>
+                    <p class="text-sm text-blue-300">by {{ record.user }}</p>
                   </div>
                   <div class="bg-blue-800/50 px-2 py-1 rounded text-sm font-medium text-blue-300">
-                    {{ assessment.rating }}/5
+                    {{ record.type === 'ticket' ? record.status : `${record.rating}/5` }}
                   </div>
                 </div>
-                <div class="mb-2">
+                
+                <!-- Assessment Specific Content -->
+                <div v-if="record.type === 'assessment'" class="mb-2">
                   <div class="text-sm text-gray-400 mb-1">Value Assessment</div>
                   <div class="flex space-x-3 text-sm">
                     <div>
                       <span class="text-gray-500">Learn:</span>
-                      <span class="text-white">${{ assessment.values.learn }}</span>
+                      <span class="text-white">${{ record.values.learn }}</span>
                     </div>
                     <div>
-                      <span class="text-gray-500">Apply:</span>
-                      <span class="text-white">${{ assessment.values.apply }}</span>
+                      <span class="text-gray-500">Experience:</span>
+                      <span class="text-white">${{ record.values.apply }}</span>
                     </div>
                     <div>
                       <span class="text-gray-500">Master:</span>
-                      <span class="text-white">${{ assessment.values.master }}</span>
+                      <span class="text-white">${{ record.values.master }}</span>
                     </div>
                   </div>
                 </div>
+                
+                <!-- Ticket Specific Content -->
+                <div v-if="record.type === 'ticket'" class="mb-2">
+                  <div class="text-sm text-gray-400 mb-1">Ticket Details</div>
+                  <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">ID:</span>
+                      <span class="text-white">#{{ record.id }}</span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Completed:</span>
+                      <span class="text-white">{{ record.completedDate }}</span>
+                    </div>
+                    <div v-if="record.value">
+                      <span class="text-gray-500">Value Added:</span>
+                      <span class="text-white">+${{ record.value }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Common Fields -->
                 <p class="text-gray-300 text-sm mt-2 italic">
-                  "{{ assessment.comment }}"
+                  "{{ record.comment }}"
                 </p>
                 <div class="text-xs text-gray-400 mt-2">
-                  {{ assessment.date }}
+                  {{ record.date }}
                 </div>
+              </div>
+              
+              <!-- View All toggle button -->
+              <div v-if="combinedRecords.length > 2" class="text-center">
+                <button 
+                  @click="showAllRecords = !showAllRecords" 
+                  class="inline-flex items-center px-4 py-2 text-sm bg-gray-800/80 hover:bg-gray-700/80 rounded-lg text-blue-300 transition-colors"
+                >
+                  <span>{{ showAllRecords ? 'Show Less' : 'View All Records' }}</span>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    class="h-4 w-4 ml-1 transition-transform" 
+                    :class="{'transform rotate-180': showAllRecords}"
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
               </div>
             </div>
             
@@ -426,10 +476,18 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p class="text-gray-400">No assessments available yet</p>
-              <NuxtLink to="/skills" class="mt-4 inline-block px-4 py-2 bg-blue-600/50 hover:bg-blue-600/70 rounded-lg text-white text-sm">
-                Create an Assessment
-              </NuxtLink>
+              <p class="text-gray-400">No records available yet</p>
+              <div class="mt-4 flex justify-center space-x-4">
+                <NuxtLink to="/skills" class="inline-block px-4 py-2 bg-blue-600/50 hover:bg-blue-600/70 rounded-lg text-white text-sm">
+                  Request Assessment
+                </NuxtLink>
+                <button 
+                  @click="setActiveTab('service')" 
+                  class="inline-block px-4 py-2 bg-purple-600/50 hover:bg-purple-600/70 rounded-lg text-white text-sm"
+                >
+                  Create Service Ticket
+                </button>
+              </div>
             </div>
           </div>
           
@@ -447,7 +505,7 @@
                 
                 <div class="inline-flex items-center text-green-400 text-sm font-medium mb-3">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
                   </svg>
                   <span>+5,200</span>
                 </div>
@@ -456,11 +514,11 @@
                 
                 <div class="space-y-3">
                   <div class="flex justify-between text-sm">
-                    <span class="text-gray-400">Skill Contributions</span>
+                    <span class="text-gray-400">Skill Value</span>
                     <span class="text-white">${{ formatNumber(skillContributionValue) }}</span>
                   </div>
                   <div class="flex justify-between text-sm">
-                    <span class="text-gray-400">Knowledge Sharing</span>
+                    <span class="text-gray-400">Knowledge Acquisition</span>
                     <span class="text-white">${{ formatNumber(knowledgeSharingValue) }}</span>
                   </div>
                   <div class="flex justify-between text-sm">
@@ -468,53 +526,60 @@
                     <span class="text-white">${{ formatNumber(communityParticipationValue) }}</span>
                   </div>
                   <div class="flex justify-between text-sm">
-                    <span class="text-gray-400">Verification Activities</span>
+                    <span class="text-gray-400">Verified Activity</span>
                     <span class="text-white">${{ formatNumber(verificationValue) }}</span>
                   </div>
                 </div>
               </div>
               
-              <!-- Improvement Section from about-wealth.vue -->
+              <!-- Improvement Section - Now "Potential Impact" with predictive analysis -->
               <div class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm">
-                <h3 class="text-lg font-bold text-white mb-3">To Increase Your Score</h3>
+                <h3 class="text-lg font-bold text-white mb-3">Potential Impact</h3>
+                <p class="text-gray-300 text-sm mb-4">
+                  Based on these skills and contributions, predictive analysis suggests the following potential impact:
+                </p>
                 
                 <ul class="space-y-3">
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
-                    <p class="text-gray-300 text-sm">Consider upskilling by learning new abilities that are valuable to society</p>
+                    <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Creative Leadership</span>: Exceptional skills in VR/AR and graphic design create the conditions for being a potential pioneer in immersive storytelling. Could be best utilized in leadership roles on projects that blend digital art with education.</p>
                   </li>
                   
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
-                    <p class="text-gray-300 text-sm">Engage in new opportunities to share knowledge and verify information</p>
+                    <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Technology Integration</span>: The combination of AI/LLM expertise with 3D modeling indicates significant potential to transform how communities interact with complex data through visualization. These complementary skills enable the creation of intuitive interfaces for abstract information.</p>
                   </li>
                   
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
-                    <p class="text-gray-300 text-sm">Participate actively in community initiatives and collaborative projects</p>
+                    <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Educational Innovation</span>: A balanced skill profile suggests untapped potential for creating next-generation educational experiences. The combination of immersive technology with AI-driven personalization could revolutionize how people learn complex subjects.</p>
                   </li>
                   
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
-                    <p class="text-gray-300 text-sm">Assess your skills and develop those with high societal value ratings</p>
+                    <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Community Impact</span>: Based on existing contribution patterns, establishing mentorship programs in these domains could create an estimated 215% return on knowledge investment in local technology communities. The ripple effect would extend beyond direct students to broader ecosystem development.</p>
                   </li>
                 </ul>
+                
+                <div class="mt-4 text-xs text-gray-400 italic">
+                  This analysis evolves as skills and verified actions develop. Last updated: May 4, 2025
+                </div>
               </div>
               
               <!-- Recent Activity Section -->
@@ -558,6 +623,159 @@
         class="fixed inset-0 bg-black transition-opacity z-10"
         :style="{ opacity: darkOverlayOpacity }"
       ></div>
+      
+      <!-- Mock Home Page Panel that appears as you slide out the tab -->
+      <div 
+        v-if="activeTab === 'dashboard'" 
+        class="fixed inset-0 z-5 transition-all duration-300"
+        :style="{
+          opacity: revealPanelOpacity,
+          transform: `scale(${0.9 + (revealPanelOpacity * 0.1)})`,
+          pointerEvents: dragPosition < maxNegativeDrag.value * 0.5 ? 'auto' : 'none'
+        }"
+      >
+        <div class="relative h-full max-w-md mx-auto bg-gradient-to-b from-gray-900 via-blue-950 to-purple-950 rounded-xl shadow-2xl overflow-hidden">
+          <!-- Header with blurred background -->
+          <div class="relative h-40 overflow-hidden">
+            <!-- Background pattern/gradient -->
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-50">
+              <div class="absolute inset-0 opacity-30">
+                <svg viewBox="0 0 100 100" class="w-full h-full" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="grid" patternUnits="userSpaceOnUse" width="10" height="10" x="0" y="0">
+                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5" />
+                    </pattern>
+                  </defs>
+                  <rect width="100" height="100" fill="url(#grid)" />
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Animated particles -->
+            <div class="absolute inset-0 overflow-hidden">
+              <div v-for="i in 8" :key="i" class="absolute rounded-full opacity-70"
+                :style="{
+                  width: `${3 + Math.random() * 5}px`,
+                  height: `${3 + Math.random() * 5}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  backgroundColor: `rgba(255, 255, 255, ${0.3 + Math.random() * 0.5})`,
+                  animation: `float ${8 + Math.random() * 7}s infinite ease-in-out`,
+                  animationDelay: `${Math.random() * 5}s`
+                }"
+              ></div>
+            </div>
+            
+            <!-- Welcome message -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pt-8">
+              <h1 class="text-2xl font-bold text-white mb-2">Welcome to NIEA</h1>
+              <p class="text-blue-200 text-sm">Your journey to contributing value begins here</p>
+            </div>
+          </div>
+          
+          <!-- Main content preview -->
+          <div class="px-6 py-8">
+            <!-- Quick stats preview -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div class="bg-gray-800/40 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:border-blue-500/30 transition-all transform hover:scale-[1.02]">
+                <div class="text-sm text-gray-400 mb-1">Community Rating</div>
+                <div class="text-xl font-bold text-white">4.8<span class="text-sm text-blue-300">/5.0</span></div>
+                <div class="mt-1 text-xs text-blue-300">Top 5% contributor</div>
+              </div>
+              
+              <div class="bg-gray-800/40 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:border-blue-500/30 transition-all transform hover:scale-[1.02]">
+                <div class="text-sm text-gray-400 mb-1">Wealth Growth</div>
+                <div class="text-xl font-bold text-green-400">+12.4%</div>
+                <div class="mt-1 text-xs text-blue-300">Since last month</div>
+              </div>
+            </div>
+            
+            <!-- Get Started Teaser -->
+            <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl p-5 border border-gray-700 mb-6">
+              <h3 class="text-lg font-bold text-white mb-3">Complete Your Profile</h3>
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <span class="text-gray-300">Create account</span>
+                </div>
+                
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 border border-blue-500/30">
+                    <span class="text-blue-400 text-xs font-medium">2</span>
+                  </div>
+                  <span class="text-white font-medium">Add your skills</span>
+                </div>
+                
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-gray-700/50 flex items-center justify-center mr-3 border border-gray-600/30">
+                    <span class="text-gray-400 text-xs">3</span>
+                  </div>
+                  <span class="text-gray-400">Connect with community</span>
+                </div>
+                
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-gray-700/50 flex items-center justify-center mr-3 border border-gray-600/30">
+                    <span class="text-gray-400 text-xs">4</span>
+                  </div>
+                  <span class="text-gray-400">Start earning value</span>
+                </div>
+              </div>
+              
+              <div class="w-full bg-gray-700/30 h-2 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full" style="width: 35%"></div>
+              </div>
+              <div class="mt-1 text-xs text-blue-300">2 of 4 steps completed</div>
+            </div>
+            
+            <!-- Upcoming opportunities -->
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold text-white">Opportunities</h3>
+                <span class="text-xs text-blue-400">See all</span>
+              </div>
+              
+              <div class="space-y-3">
+                <div class="bg-gray-800/20 backdrop-blur-sm p-3 rounded-lg border border-gray-700/50 hover:border-blue-500/30 transition-all transform hover:scale-[1.01]">
+                  <div class="flex items-center mb-1">
+                    <div class="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center mr-2 text-lg">🎨</div>
+                    <div>
+                      <div class="font-medium text-white">Design Challenge</div>
+                      <div class="text-xs text-blue-300">Starting in 2 days</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-gray-400 mt-1">
+                    Create immersive UI designs for the next-gen AR experience
+                  </div>
+                </div>
+                
+                <div class="bg-gray-800/20 backdrop-blur-sm p-3 rounded-lg border border-gray-700/50 hover:border-blue-500/30 transition-all transform hover:scale-[1.01]">
+                  <div class="flex items-center mb-1">
+                    <div class="w-8 h-8 rounded-full bg-purple-600/20 flex items-center justify-center mr-2 text-lg">🤖</div>
+                    <div>
+                      <div class="font-medium text-white">AI Hackathon</div>
+                      <div class="text-xs text-purple-300">Starting next week</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-gray-400 mt-1">
+                    Build assistants that help community members contribute
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Join Now Button (fixed at bottom) -->
+          <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-950 via-gray-950/90 to-transparent pt-16">
+            <button class="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-medium transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-blue-500/20">
+              Create Your Profile
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -589,12 +807,12 @@ const props = defineProps({
 defineEmits(['show-skills']);
 
 // Updated tabs array to reflect new tab names
-const tabs = ['dashboard', 'documentation', 'value', 'profile'];
-const activeTab = ref('documentation');
+const tabs = ['dashboard', 'documentation', 'value', 'service'];
+const activeTab = ref('dashboard');
 
 const setActiveTab = (tab) => {
   activeTab.value = tab;
-  if (tab === 'profile') {
+  if (tab === 'service') { // Changed 'profile' to 'service'
     showTicketQueue.value = true;
   } else {
     showTicketQueue.value = false;
@@ -685,8 +903,8 @@ const toggleSkill = (id) => {
 };
 
 const assessSkill = (skill) => {
-  currentSkillId.value = skill.id;
-  showAssessmentPanel.value = true;
+  // Navigate to skills page instead of toggling the skills assessment panel
+  router.push('/skills');
 };
 
 // Sample skills data
@@ -849,6 +1067,55 @@ function handleTicketQueueBack() {
   showTicketQueue.value = false;
   activeTab.value = 'dashboard';
 }
+
+// Combined records for the documentation tab
+const combinedRecords = computed(() => {
+  return [
+    ...assessmentList.map(assessment => ({ ...assessment, type: 'assessment' })),
+    ...completedTickets.map(ticket => ({ ...ticket, type: 'ticket' }))
+  ].sort((a, b) => new Date(b.date) - new Date(a.date));
+});
+
+// State for showing all records or just the first two
+const showAllRecords = ref(false);
+
+// Sample completed tickets data
+const completedTickets = [
+  {
+    id: 101,
+    title: 'Website Redesign',
+    user: 'John Doe',
+    status: 'Completed',
+    completedDate: 'April 30, 2025',
+    value: 3200,
+    comment: 'Successfully redesigned the company website with a modern look and improved user experience.',
+    date: 'April 30, 2025'
+  },
+  {
+    id: 102,
+    title: 'AI Chatbot Implementation',
+    user: 'Jane Smith',
+    status: 'Completed',
+    completedDate: 'April 28, 2025',
+    value: 2800,
+    comment: 'Implemented an AI chatbot to handle customer inquiries, resulting in a 30% reduction in response time.',
+    date: 'April 28, 2025'
+  }
+];
+
+// Calculate the reveal opacity for the home page panel
+const revealPanelOpacity = computed(() => {
+  // Start revealing when we've dragged to about 30% of max
+  const startReveal = maxNegativeDrag.value * 0.3;
+  // Fully reveal at about 70% of max
+  const fullReveal = maxNegativeDrag.value * 0.7;
+  
+  if (dragPosition.value >= 0) return 0;
+  if (dragPosition.value <= fullReveal) return 1;
+  
+  // Linear interpolation between 0 and 1 based on drag position
+  return Math.min(Math.abs((dragPosition.value - startReveal) / (fullReveal - startReveal)), 1);
+});
 </script>
 
 <style scoped>

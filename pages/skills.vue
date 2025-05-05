@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-900 py-8 px-4">
+  <div class="min-h-screen bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 py-8 px-4">
     <div class="max-w-2xl mx-auto">
-      <!-- Header Section -->
-      <div class="flex justify-between items-center mb-8">
+      <!-- Header Section with glass morphism -->
+      <div class="flex justify-between items-center mb-8 bg-white/5 backdrop-blur-md border border-blue-500/20 rounded-xl p-4 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
         <h1 class="text-3xl font-bold text-white">Skills Assessment</h1>
         <NuxtLink to="/profile" class="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -13,16 +13,16 @@
       </div>
       
       <div v-if="activeView === 'list'" class="animate-fadeIn">
-        <!-- Skills Grid -->
+        <!-- Skills Grid with glass morphism cards -->
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           <button 
             v-for="skill in skills" 
             :key="skill.id"
             @click="showSkillDetail(skill)"
-            class="skill-card flex flex-col items-center p-6 rounded-xl transition-all border"
+            class="skill-card flex flex-col items-center p-6 rounded-xl transition-all border backdrop-blur-md"
             :class="[
-              'bg-gray-800/50 hover:bg-gray-700/50 border-gray-700 hover:border-blue-500/50',
-              'transform hover:-translate-y-1 hover:shadow-blue-glow'
+              'bg-white/5 hover:bg-white/10 border-blue-500/20 hover:border-blue-500/50',
+              'transform hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)]'
             ]"
           >
             <div class="w-16 h-16 bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
@@ -33,40 +33,57 @@
           </button>
         </div>
         
-        <!-- Additional Content -->
-        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-          <h2 class="text-xl font-bold text-white mb-4">Reflection & Success Tips</h2>
+        <!-- Additional Content with glass morphism -->
+        <div class="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+          <h2 class="text-xl font-bold text-white mb-4">Understanding Skill Value</h2>
+          
+          <div class="mb-6">
+            <p class="text-gray-300 mb-3">
+              You're viewing Khoury's skills and expertise—a collection of capabilities that represent stored potential to create value in your life and our community. Your honest assessment directly impacts their Envalumental Wealth.
+            </p>
+            <p class="text-gray-300">
+              When rating these skills, consider how they could meaningfully impact <span class="italic">your</span> journey. Your evaluation acknowledges the real-world value of another person's knowledge and abilities.
+            </p>
+          </div>
+          
+          <h3 class="text-lg font-bold text-blue-300 mb-3">How Your Assessment Matters</h3>
           
           <ul class="space-y-3 text-gray-300">
             <li class="flex items-start">
               <div class="mr-3 text-blue-400">•</div>
-              <p><span class="font-medium text-blue-300">Clarify Your Intent</span> – Be specific about how each skill helps you achieve your goals.</p>
+              <p><span class="font-medium text-blue-300">To Learn</span> – What would you pay to gain knowledge from Khoury about this skill? Value access to their expertise and guidance.</p>
             </li>
             <li class="flex items-start">
               <div class="mr-3 text-blue-400">•</div>
-              <p><span class="font-medium text-blue-300">Track Progress</span> – Revisit and adjust values over time as your priorities evolve.</p>
+              <p><span class="font-medium text-blue-300">To Experience</span> – What is it worth to work alongside them, applying this skill in real situations? Consider the opportunity to collaborate.</p>
             </li>
             <li class="flex items-start">
               <div class="mr-3 text-blue-400">•</div>
-              <p><span class="font-medium text-blue-300">Anchor to Purpose</span> – Connect each skill to your larger mission or core values.</p>
+              <p><span class="font-medium text-blue-300">To Master</span> – What would comprehensive mentorship in this skill be worth to you? Value the complete transfer of expertise.</p>
             </li>
             <li class="flex items-start">
               <div class="mr-3 text-blue-400">•</div>
-              <p><span class="font-medium text-blue-300">Prioritize High-Impact Skills</span> – Focus first on skills you rated 8–10 in importance.</p>
+              <p><span class="font-medium text-blue-300">Be Thoughtful</span> – Your assessment helps Khoury understand how their skills resonate with others and shapes their contribution potential.</p>
             </li>
             <li class="flex items-start">
               <div class="mr-3 text-blue-400">•</div>
-              <p><span class="font-medium text-blue-300">Use Comments for Planning</span> – Turn your notes into actionable steps or milestones.</p>
+              <p><span class="font-medium text-blue-300">Provide Context</span> – Explain why you value this skill—personal growth, career opportunities, community needs, or other insights.</p>
             </li>
           </ul>
+          
+          <div class="mt-6 bg-blue-900/20 p-4 rounded-lg border border-blue-800/30">
+            <p class="text-blue-200 text-sm">
+              <span class="font-bold">Remember:</span> Envalumental Wealth represents the stored potential of an individual's contributions to society. By recognizing the value in Khoury's skills, you're acknowledging their capacity to create positive change through knowledge sharing, mentorship, and collaboration.
+            </p>
+          </div>
         </div>
       </div>
       
-      <!-- Skill Detail View -->
+      <!-- Skill Detail View with glass morphism -->
       <div v-else-if="activeView === 'detail' && selectedSkill" class="animate-fadeIn">
-        <div class="bg-gradient-to-b from-gray-800/70 to-gray-900/70 rounded-xl border border-gray-700 overflow-hidden">
+        <div class="bg-white/5 backdrop-blur-md rounded-xl border border-blue-500/20 overflow-hidden shadow-[0_0_15px_rgba(59,130,246,0.15)]">
           <!-- Skill Header -->
-          <div class="p-6 border-b border-gray-700">
+          <div class="p-6 border-b border-blue-800/30">
             <button @click="backToList" class="text-blue-400 hover:text-blue-300 transition-colors mb-4 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -95,22 +112,22 @@
             </div>
           </div>
           
-          <!-- Value Form (when active) -->
-          <div v-if="formActive" class="p-6 border-b border-gray-700 bg-blue-900/10">
-            <h3 class="text-xl font-semibold text-white mb-4">Add Your Assessment</h3>
+          <!-- Value Form (when active) with glass morphism -->
+          <div v-if="formActive" class="p-6 border-b border-blue-800/30 bg-blue-900/10">
+            <h3 class="text-xl font-semibold text-white mb-4">What Would You:</h3>
             
             <form @submit.prevent="submitAssessment" class="space-y-5">
               <!-- Value Inputs -->
               <div class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div class="space-y-2">
-                    <label class="block text-sm text-gray-300">Value to Learn ($)</label>
+                    <label class="block text-sm text-gray-300">Pay to Learn ($)</label>
                     <div class="relative">
                       <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input 
                         v-model="valueForm.learnValue" 
                         type="number" 
-                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
+                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-blue-700/30 text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50"
                         min="0"
                         step="1"
                       />
@@ -118,13 +135,13 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label class="block text-sm text-gray-300">Value to Apply ($)</label>
+                    <label class="block text-sm text-gray-300">Pay to Experience ($)</label>
                     <div class="relative">
                       <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input 
                         v-model="valueForm.applyValue" 
                         type="number" 
-                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
+                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-blue-700/30 text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50"
                         min="0"
                         step="1"
                       />
@@ -132,13 +149,13 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label class="block text-sm text-gray-300">Value to Master ($)</label>
+                    <label class="block text-sm text-gray-300">Pay to Master ($)</label>
                     <div class="relative">
                       <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input 
                         v-model="valueForm.masterValue" 
                         type="number" 
-                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
+                        class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-800/80 border border-blue-700/30 text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50"
                         min="0"
                         step="1"
                       />
@@ -150,7 +167,7 @@
               <!-- Importance Slider -->
               <div class="space-y-2">
                 <label class="block text-sm text-gray-300">
-                  Importance to You: <span class="text-white font-medium">{{ valueForm.importance }}</span>
+                  How Valuable is This Skill to You: <span class="text-white font-medium">{{ valueForm.importance }}</span>
                 </label>
                 <input 
                   v-model="valueForm.importance" 
@@ -178,9 +195,9 @@
                 <label class="block text-sm text-gray-300">Why does this skill matter to you?</label>
                 <textarea 
                   v-model="valueForm.comment" 
-                  class="w-full px-4 py-2 rounded-lg bg-gray-800/80 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
+                  class="w-full px-4 py-2 rounded-lg bg-gray-800/80 border border-blue-700/30 text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50"
                   rows="4"
-                  placeholder="Explain how this skill helps you achieve your goals..."
+                  placeholder="Explain how this skill would add value..."
                 ></textarea>
               </div>
               
@@ -189,13 +206,13 @@
                 <button 
                   type="button"
                   @click="cancelForm" 
-                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-white"
+                  class="px-4 py-2 bg-gray-700/60 hover:bg-gray-600/60 rounded-lg transition-colors text-white border border-gray-600/30"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-white flex items-center"
+                  class="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-400 hover:from-blue-700 hover:to-cyan-500 rounded-lg transition-colors text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30"
                 >
                   <span>Submit Assessment</span>
                 </button>
@@ -228,18 +245,18 @@
               
               <!-- Skill Metrics -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                  <div class="text-sm text-gray-400 mb-1">Contribution to wealth</div>
+                <div class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30">
+                  <div class="text-sm text-gray-400 mb-1">Current Envalumental Worth</div>
                   <div class="text-xl font-semibold text-blue-400">${{ formatNumber(selectedSkill.contribution) }}</div>
                 </div>
                 
-                <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                  <div class="text-sm text-gray-400 mb-1">Society rating</div>
+                <div class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30">
+                  <div class="text-sm text-gray-400 mb-1">Community rating</div>
                   <div class="text-xl font-semibold text-blue-400">{{ selectedSkill.rating.toFixed(1) }} / 5.0</div>
                 </div>
                 
-                <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                  <div class="text-sm text-gray-400 mb-1">Market demand</div>
+                <div class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30">
+                  <div class="text-sm text-gray-400 mb-1">Community demand</div>
                   <div class="flex mt-1">
                     <div v-for="i in 5" :key="i" 
                       class="w-2 h-6 mx-0.5 rounded-full"
@@ -261,7 +278,7 @@
                   <div 
                     v-for="(assessment, index) in userSkillAssessments[selectedSkill.id]" 
                     :key="index"
-                    class="bg-gray-800/50 rounded-lg p-4 border border-gray-700"
+                    class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30"
                   >
                     <div class="grid grid-cols-3 gap-4 mb-3">
                       <div>
@@ -281,7 +298,7 @@
                       <div class="text-xs text-gray-500">Importance: {{ assessment.importance }}/10</div>
                       <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
                         <div 
-                          class="h-full bg-blue-500" 
+                          class="h-full bg-gradient-to-r from-blue-400 to-cyan-400" 
                           :style="{ width: `${(assessment.importance / 10) * 100}%` }"
                         ></div>
                       </div>

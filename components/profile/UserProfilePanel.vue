@@ -13,12 +13,33 @@
         @back="handleTicketQueueBack"
       />
       
-      <!-- Background gradient -->
-      <div v-else class="relative bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 p-6 pt-10">
+      <!-- Show Global View when globalViewActive is true -->
+      <GlobalView
+        v-else-if="globalViewActive"
+        @view-profile="viewGlobeProfile"
+        @back="toggleGlobalView(false)"
+      />
+      
+      <!-- Background gradient without wireframe globe overlay -->
+      <div v-else class="relative bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 p-6 pt-10 overflow-hidden">
         
-
+        <!-- View Toggle Control positioned at top left corner - Updated with globe icon -->
+        <div v-if="activeTab === 'dashboard'" class="absolute top-3 left-3 z-20">
+          <button 
+            @click="toggleGlobalView()"
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
+            :title="globalViewActive ? 'Switch to Static View' : 'Switch to Globe View'"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-colors duration-300" 
+                 :class="globalViewActive ? 'text-white' : 'text-gray-500'"
+                 viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
         <!-- Profile Header -->
-        <div class="flex flex-col items-center mb-6">
+        <div class="flex flex-col items-center mb-6 relative z-10">
           <div class="relative w-24 h-24 mb-4">
             <div class="absolute inset-0 rounded-full bg-blue-500/20 blur-md"></div>
             <img 
@@ -31,7 +52,7 @@
         </div>
         
         <!-- Rating Indicator with Free-flowing Animation Background -->
-        <div class="flex flex-col items-center mb-4">
+        <div class="flex flex-col items-center mb-4 relative z-10">
           <!-- Container for the value display with free-flowing animations -->
           <div class="relative w-full h-40">
             <!-- Animated background elements that flow freely -->
@@ -50,36 +71,6 @@
                 }"
               ></div>
               
-              <!-- Flowing lines -->
-              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                <!-- Multiple flowing lines with different animations -->
-                <path 
-                  d="M10,50 Q30,20 50,50 Q70,80 90,50" 
-                  fill="none" 
-                  stroke="rgba(99, 180, 255, 0.2)" 
-                  stroke-width="0.5"
-                  class="animate-flow"
-                  style="animation-duration: 15s;"
-                />
-                
-                <path 
-                  d="M10,60 Q40,40 60,70 Q80,40 90,60" 
-                  fill="none" 
-                  stroke="rgba(147, 197, 253, 0.15)" 
-                  stroke-width="0.5"
-                  class="animate-flow-reverse"
-                  style="animation-duration: 20s;"
-                />
-                
-                <path 
-                  d="M20,30 Q35,60 50,30 Q65,10 80,30" 
-                  fill="none" 
-                  stroke="rgba(59, 130, 246, 0.2)" 
-                  stroke-width="0.5"
-                  class="animate-flow"
-                  style="animation-duration: 25s;"
-                />
-              </svg>
               
               <!-- Star decoration in the flowing background -->
               <div class="stars-container absolute inset-0 pointer-events-none">
@@ -329,7 +320,7 @@
             @click="setActiveTab('dashboard')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span class="text-xs mt-1">Home</span>
           </button>
@@ -377,6 +368,37 @@
         
         <!-- Tab Content Panels -->
         <div class="mt-6">
+          <!-- Home Tab Content - With toggle between static view and globe view -->
+          <div v-if="activeTab === 'dashboard'" class="px-2 py-4">
+            <!-- Tutorial for global view - only shown after first activation -->
+            <div 
+              v-if="showGlobalViewTutorial" 
+              class="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4 mb-6 relative"
+            >
+              <button 
+                @click="showGlobalViewTutorial = false"
+                class="absolute top-2 right-2 text-blue-400 hover:text-white"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              
+              <h4 class="text-blue-300 font-medium mb-2">Interactive Globe View</h4>
+              <p class="text-sm text-gray-300">
+                Explore the NIEA community through an interactive 3D globe. Each node represents a profile with different skills and contributions.
+              </p>
+              <ul class="text-sm text-gray-300 mt-2 space-y-1 ml-5 list-disc">
+                <li>Use your mouse wheel or pinch gestures to zoom in/out</li>
+                <li>Drag to rotate the globe and explore different profiles</li>
+                <li>Click on a node to view profile details</li>
+                <li>When zoomed in enough, you can view full profiles</li>
+              </ul>
+            </div>
+            
+            <!-- Removed welcome boxes and CTA to try profile globe -->
+          </div>
+          
           <!-- Documentation Tab Panel (now Records Tab) - Mixed list of assessments and completed tickets -->
           <div v-if="activeTab === 'documentation'" class="px-2 py-4">
             <h3 class="text-lg font-semibold text-blue-300 mb-4">Envalumental Records</h3>
@@ -631,6 +653,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import SkillsAssessmentPanel from './SkillsAssessmentPanel.vue';
 import TicketQueuePanel from './TicketQueuePanel.vue';
+import GlobalView from './GlobalView.vue'; // Import the new GlobalView component
 
 const props = defineProps({
   userName: {
@@ -653,12 +676,45 @@ const props = defineProps({
 
 defineEmits(['show-skills']);
 
+// Global View state
+const globalViewActive = ref(false);
+const showGlobalViewTutorial = ref(false);
+const hasSeenGlobalView = ref(false);
+
+// Toggle function for global view
+function toggleGlobalView(forceState) {
+  if (typeof forceState === 'boolean') {
+    globalViewActive.value = forceState;
+  } else {
+    globalViewActive.value = !globalViewActive.value;
+  }
+  
+  // Show tutorial when activating global view for the first time
+  if (globalViewActive.value && !hasSeenGlobalView.value) {
+    showGlobalViewTutorial.value = true;
+    hasSeenGlobalView.value = true;
+  }
+}
+
+// Handle profile selection from Global View
+function viewGlobeProfile(profileId) {
+  console.log(`Viewing profile: ${profileId}`);
+  // For now, we'll just disable global view and go back to static view
+  // In a real implementation, you might navigate to a specific profile page
+  globalViewActive.value = false;
+}
+
 // Updated tabs array to reflect new tab names
 const tabs = ['dashboard', 'documentation', 'value', 'service'];
 const activeTab = ref('dashboard');
 
 const setActiveTab = (tab) => {
   activeTab.value = tab;
+  // Disable global view when switching tabs
+  if (tab !== 'dashboard') {
+    globalViewActive.value = false;
+  }
+  
   if (tab === 'service') { // Changed 'profile' to 'service'
     showTicketQueue.value = true;
   } else {
@@ -933,36 +989,32 @@ const completedTickets = [
     title: 'Website Redesign',
     user: 'John Doe',
     status: 'Completed',
+    date: 'April 30, 2025',
     completedDate: 'April 30, 2025',
-    value: 3200,
-    comment: 'Successfully redesigned the company website with a modern look and improved user experience.',
-    date: 'April 30, 2025'
+    comment: 'The redesign has dramatically improved user engagement metrics.',
+    value: '2500'
   },
   {
     id: 102,
-    title: 'AI Chatbot Implementation',
-    user: 'Jane Smith',
+    title: 'UI Animation Implementation',
+    user: 'Emma Wilson',
     status: 'Completed',
-    completedDate: 'April 28, 2025',
-    value: 2800,
-    comment: 'Implemented an AI chatbot to handle customer inquiries, resulting in a 30% reduction in response time.',
-    date: 'April 28, 2025'
+    date: 'April 26, 2025',
+    completedDate: 'April 26, 2025',
+    comment: 'Smooth animations that enhance the user experience without being distracting.',
+    value: '1800'
+  },
+  {
+    id: 103,
+    title: 'Database Optimization',
+    user: 'Marcus Chen',
+    status: 'Completed',
+    date: 'April 23, 2025',
+    completedDate: 'April 23, 2025',
+    comment: 'Query time reduced by 70%. Much better performance overall.',
+    value: '3200'
   }
 ];
-
-// Calculate the reveal opacity for the home page panel
-const revealPanelOpacity = computed(() => {
-  // Start revealing when we've dragged to about 30% of max
-  const startReveal = maxNegativeDrag.value * 0.3;
-  // Fully reveal at about 70% of max
-  const fullReveal = maxNegativeDrag.value * 0.7;
-  
-  if (dragPosition.value >= 0) return 0;
-  if (dragPosition.value <= fullReveal) return 1;
-  
-  // Linear interpolation between 0 and 1 based on drag position
-  return Math.min(Math.abs((dragPosition.value - startReveal) / (fullReveal - startReveal)), 1);
-});
 </script>
 
 <style scoped>
@@ -1128,5 +1180,37 @@ const revealPanelOpacity = computed(() => {
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+.animate-floatSlow {
+  animation: floatSlow 20s infinite ease-in-out;
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-15px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-5px) translateX(25px);
+  }
+  75% {
+    transform: translateY(10px) translateX(-15px);
+  }
+}
+
+.wireframe-globe-bg {
+  animation: rotateGlobeBg 120s linear infinite;
+}
+
+@keyframes rotateGlobeBg {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

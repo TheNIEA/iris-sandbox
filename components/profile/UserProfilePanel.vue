@@ -23,8 +23,8 @@
       <!-- Background gradient without wireframe globe overlay -->
       <div v-else class="relative bg-gradient-to-b from-gray-950 via-blue-950 to-purple-950 p-6 pt-10 overflow-hidden">
         
-        <!-- View Toggle Control positioned at top left corner - Updated with globe icon -->
-        <div v-if="activeTab === 'dashboard'" class="absolute top-3 left-3 z-20">
+        <!-- View Toggle Control positioned at top left corner - Updated with globe icon and share button -->
+        <div v-if="activeTab === 'dashboard'" class="absolute top-3 left-3 z-20 flex items-center space-x-2">
           <button 
             @click="toggleGlobalView()"
             class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
@@ -34,6 +34,16 @@
                  :class="globalViewActive ? 'text-white' : 'text-gray-500'"
                  viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
+          <button 
+            @click="shareProfile"
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
+            title="Share Profile"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 hover:text-white transition-colors duration-300" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
             </svg>
           </button>
         </div>
@@ -380,7 +390,7 @@
                 class="absolute top-2 right-2 text-blue-400 hover:text-white"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
                 </svg>
               </button>
               
@@ -565,7 +575,7 @@
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
                     <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Creative Leadership</span>: Exceptional skills in VR/AR and graphic design create the conditions for being a potential pioneer in immersive storytelling. Could be best utilized in leadership roles on projects that blend digital art with education.</p>
@@ -574,7 +584,7 @@
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
                     <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Technology Integration</span>: The combination of AI/LLM expertise with 3D modeling indicates significant potential to transform how communities interact with complex data through visualization. These complementary skills enable the creation of intuitive interfaces for abstract information.</p>
@@ -583,7 +593,7 @@
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
                     <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Educational Innovation</span>: A balanced skill profile suggests untapped potential for creating next-generation educational experiences. The combination of immersive technology with AI-driven personalization could revolutionize how people learn complex subjects.</p>
@@ -592,7 +602,7 @@
                   <li class="flex items-start">
                     <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 011.414-1.414L8 12.586l7.293-7.293a1 1 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
                     <p class="text-gray-300 text-sm"><span class="text-blue-300 font-medium">Community Impact</span>: Based on existing contribution patterns, establishing mentorship programs in these domains could create an estimated 215% return on knowledge investment in local technology communities. The ripple effect would extend beyond direct students to broader ecosystem development.</p>
@@ -646,6 +656,145 @@
         :style="{ opacity: darkOverlayOpacity }"
       ></div>
     </div>
+
+    <!-- Share Profile Popup -->
+    <div v-if="showShareDialog" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showShareDialog = false"></div>
+      
+      <div class="relative z-10 bg-gradient-to-b from-gray-900 to-blue-950 p-6 rounded-xl max-w-md mx-4 border border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+        <div class="flex justify-between items-start">
+          <h3 class="text-xl font-bold text-blue-300">Share Profile</h3>
+          <button @click="showShareDialog = false" class="text-gray-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="flex flex-col items-center">
+            <!-- Using the ProfileCard component with aspect-ratio: 9/16 -->
+            <ProfileCard
+              ref="shareCardRef"
+              :userName="props.userName"
+              :profileImage="props.profileImage"
+              :wealthAmount="props.wealthAmount"
+              :rating="props.rating"
+              :skills="skills"
+              :skillsCount="skills.length"
+              :ratingsCount="combinedRecords.length"
+              :skillValue="skillContributionValue"
+              :knowledgeValue="knowledgeSharingValue"
+              :generatedDate="currentDate"
+              :customStyle="{ 'aspect-ratio': '9/16' }"
+            />
+            
+            <!-- Download button -->
+            <button 
+              @click="downloadShareableImage" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white flex items-center"
+              :disabled="isGeneratingImage"
+            >
+              <svg v-if="!isGeneratingImage" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <svg v-else class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ isGeneratingImage ? 'Generating...' : 'Download Image' }}
+            </button>
+          </div>
+          
+          <!-- Social sharing options -->
+          <div class="mt-6">
+            <h4 class="text-sm text-white mb-3">Share on social media</h4>
+            <div class="flex justify-center space-x-4">
+              <button class="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-500 flex items-center justify-center text-white">
+                <span class="sr-only">Twitter</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-blue-800 hover:bg-blue-700 flex items-center justify-center text-white">
+                <span class="sr-only">Facebook</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
+                </svg>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-pink-600 hover:bg-pink-500 flex items-center justify-center text-white">
+                <span class="sr-only">Instagram</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.597 0-2.917-.01-3.96-.058-.976-.045-1.505-.207-1.858-.344-.466-.182-.8-.398-1.15-.748-.35-.35-.566-.683-.748-1.15-.137-.353-.3-.882-.344-1.857-.047-1.023-.058-1.351-.058-3.807v-.468c0-2.456.011-2.784.058-3.807.045-.975.207-1.504.344-1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path>
+                </svg>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-blue-700 hover:bg-blue-600 flex items-center justify-center text-white">
+                <span class="sr-only">LinkedIn</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Profile Modal -->
+    <div v-if="showShareModal" class="fixed inset-0 flex items-center justify-center z-50" @click.self="showShareModal = false">
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-md"></div>
+      <div class="relative z-10 flex flex-col items-center bg-gradient-to-br from-gray-900 via-blue-950 to-purple-900 p-6 rounded-xl max-w-sm w-11/12 mx-auto border border-blue-500/40 shadow-2xl">
+        <div class="w-full flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-white">Share Profile</h3>
+          <button @click="showShareModal = false" class="text-gray-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="text-center mb-6">
+          <div class="inline-block p-3 bg-gray-800/50 rounded-lg border border-blue-700/30 mb-3">
+            <!-- QR Code will be rendered here by the qrcode.vue component -->
+            <QRCodeVue3
+              :value="profileLink"
+              :size="128"
+              :level="'H'"
+              class="w-32 h-32"
+            />
+          </div>
+          <p class="text-sm text-gray-300">Scan the QR code to view the profile</p>
+        </div>
+        
+        <div class="w-full mb-5">
+          <label class="block text-xs text-blue-300 mb-1">Profile Link</label>
+          <div class="flex">
+            <input 
+              type="text" 
+              :value="profileLink" 
+              readonly 
+              class="flex-1 px-3 py-2 bg-gray-800/50 border border-blue-700/30 rounded-l-lg text-gray-300"
+            />
+            <button 
+              @click="copyProfileLink" 
+              class="px-3 py-2 bg-blue-600 hover:bg-blue-500 border border-blue-700/30 rounded-r-lg text-white"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        
+        <button 
+          @click="downloadQRCode" 
+          class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download QR Code
+        </button>
+      </div>
+    </div>
 </template>
 
 <script setup>
@@ -654,6 +803,9 @@ import { useRouter } from 'vue-router';
 import SkillsAssessmentPanel from './SkillsAssessmentPanel.vue';
 import TicketQueuePanel from './TicketQueuePanel.vue';
 import GlobalView from './GlobalView.vue'; // Import the new GlobalView component
+import html2canvas from 'html2canvas'; // Import html2canvas for image capture
+import ProfileCard from '../ui/ProfileCard.vue'; // Import the ProfileCard component from correct path
+import { formatNumber, formatCurrency, formatDate, convertToLetterGrade } from '~/utils/formatter';
 
 const props = defineProps({
   userName: {
@@ -729,10 +881,6 @@ const calculateCircumference = (radius) => {
 const calculateDashOffset = (radius, percentage) => {
   const circumference = calculateCircumference(radius);
   return circumference * (1 - percentage);
-};
-
-const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-US').format(parseInt(num));
 };
 
 // Sample data for value breakdown
@@ -1001,6 +1149,7 @@ const combinedRecords = computed(() => {
   return [
     ...formattedStoredRecords,
     // Only include sample data if we don't have many real records
+    // Or append them regardless for demo purposes
     ...(formattedStoredRecords.length < 3 ? [
       ...assessmentList.map(assessment => ({ ...assessment, type: 'assessment' })),
       // Filter out sample completed tickets that might duplicate stored ones
@@ -1011,7 +1160,7 @@ const combinedRecords = computed(() => {
   ].sort((a, b) => {
     // Sort by date, newest first (handle both string and Date objects)
     const dateA = a.date instanceof Date ? a.date : new Date(a.date);
-    const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+    const dateB = b.date instanceof Date ? a.date : new Date(a.date);
     return dateB - dateA;
   });
 });
@@ -1052,202 +1201,58 @@ const completedTickets = [
     value: '3200'
   }
 ];
+
+// Share Profile state
+const showShareDialog = ref(false);
+const shareCardRef = ref(null);
+const isGeneratingImage = ref(false);
+const currentDate = new Date().toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric'
+});
+
+// Function to handle sharing profile
+function shareProfile() {
+  showShareDialog.value = true;
+}
+
+// Function to download shareable image
+const downloadShareableImage = async () => {
+  try {
+    if (!shareCardRef.value || !shareCardRef.value.cardRef) return;
+    
+    // Set loading state
+    isGeneratingImage.value = true;
+    
+    // Get the actual DOM element from the ProfileCard component's exposed ref
+    const cardElement = shareCardRef.value.cardRef;
+    
+    // Set up canvas with the exact 9:16 aspect ratio with higher resolution
+    const canvas = await html2canvas(cardElement, {
+      backgroundColor: null,
+      scale: 3, // Higher resolution for better quality
+      width: cardElement.offsetWidth,
+      height: cardElement.offsetWidth * (16/9), // Force 9:16 aspect ratio
+    });
+    
+    // Convert canvas to a data URL
+    const imgData = canvas.toDataURL('image/png');
+    
+    // Create a download link
+    const link = document.createElement('a');
+    link.href = imgData;
+    link.download = `${props.userName.replace(/\s+/g, '-')}-profile-${new Date().toISOString().slice(0, 10)}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Reset loading state
+    isGeneratingImage.value = false;
+  } catch (error) {
+    console.error('Error generating image:', error);
+    isGeneratingImage.value = false;
+    alert('Failed to generate image. Please try again.');
+  }
+};
 </script>
-
-<style scoped>
-.user-profile-panel {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-}
-
-.star {
-  color: rgba(147, 197, 253, 0.8);
-  text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
-  animation: twinkle infinite ease-in-out;
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(0.8);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-10px) translateX(5px);
-  }
-  50% {
-    transform: translateY(-5px) translateX(10px);
-  }
-  75% {
-    transform: translateY(5px) translateX(-10px);
-  }
-}
-
-.animate-flow {
-  animation: flow infinite ease-in-out;
-}
-
-.animate-flow-reverse {
-  animation: flow-reverse infinite ease-in-out;
-}
-
-@keyframes flow {
-  0%, 100% {
-    transform: translateY(0) scaleY(1);
-    stroke-dashoffset: 0;
-  }
-  50% {
-    transform: translateY(-5px) scaleY(1.05);
-    stroke-dashoffset: 10;
-  }
-}
-
-@keyframes flow-reverse {
-  0%, 100% {
-    transform: translateY(0) scaleY(1);
-    stroke-dashoffset: 10;
-  }
-  50% {
-    transform: translateY(5px) scaleY(0.95);
-    stroke-dashoffset: 0;
-  }
-}
-
-.accordion-enter-active,
-.accordion-leave-active {
-  transition: all 0.3s ease-out;
-  max-height: 300px;
-}
-
-.accordion-enter-from,
-.accordion-leave-to {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.shadow-glow-blue {
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
-}
-
-.shadow-glow-purple {
-  box-shadow: 0 0 15px rgba(147, 51, 234, 0.15);
-}
-
-.animate-spin-slow {
-  animation: spin 20s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Stylized flowing animations */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(-10px) scale(1.1);
-    opacity: 0.8;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.animate-flow {
-  animation: flow 20s infinite ease-in-out;
-}
-
-.animate-flow-reverse {
-  animation: flow-reverse 15s infinite ease-in-out;
-}
-
-@keyframes flow {
-  0%, 100% {
-    stroke-dashoffset: 0;
-  }
-  50% {
-    stroke-dashoffset: 20;
-  }
-}
-
-@keyframes flow-reverse {
-  0%, 100% {
-    stroke-dashoffset: 0;
-  }
-  50% {
-    stroke-dashoffset: -20;
-  }
-}
-
-.stars-container {
-  overflow: hidden;
-}
-
-.star {
-  animation: pulse infinite ease-in-out;
-  color: rgba(147, 197, 253, 0.8);
-  font-size: 12px;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-.animate-floatSlow {
-  animation: floatSlow 20s infinite ease-in-out;
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-15px) translateX(10px);
-  }
-  50% {
-    transform: translateY(-5px) translateX(25px);
-  }
-  75% {
-    transform: translateY(10px) translateX(-15px);
-  }
-}
-
-.wireframe-globe-bg {
-  animation: rotateGlobeBg 120s linear infinite;
-}
-
-@keyframes rotateGlobeBg {
-  0% {
-    transform: rotate(0);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

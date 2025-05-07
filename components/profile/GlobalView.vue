@@ -142,6 +142,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { formatNumber, formatCurrency } from '~/utils/formatter';
 
 // Props and emits
 const emit = defineEmits(['view-profile', 'back']);
@@ -188,11 +189,6 @@ const profiles = ref(Array.from({ length: 100 }, (_, i) => {
     }
   };
 }));
-
-// Helper function to format numbers with commas
-const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-US').format(parseInt(num));
-};
 
 // Helper function to generate a random name
 function generateName() {

@@ -436,6 +436,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { formatNumber, formatDate, formatCurrency } from '~/utils/formatter';
 
 // State management
 const activeView = ref('list');
@@ -647,18 +648,6 @@ const calculateRating = (assessment) => {
 };
 
 // Utility functions
-const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-US').format(num);
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
-};
 
 // Load previously saved assessments
 onMounted(() => {
@@ -679,6 +668,14 @@ const closeAssessmentDetail = () => {
   showAssessmentModal.value = false;
   currentAssessment.value = null;
 };
+
+// Clean up event listeners
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleDrag);
+  window.removeEventListener('touchmove', handleDrag);
+  window.removeEventListener('mouseup', endDrag);
+  window.removeEventListener('touchend', endDrag);
+});
 
 // Calculate total value
 const getTotalValue = (assessment) => {

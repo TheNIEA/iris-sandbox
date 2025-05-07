@@ -130,6 +130,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { formatNumber, formatCurrency, convertToLetterGrade } from '~/utils/formatter';
 
 const props = defineProps({
   initialSkillId: {
@@ -222,18 +223,6 @@ const calculateCircumference = (radius) => {
 const calculateDashOffset = (radius, percentage) => {
   const circumference = calculateCircumference(radius);
   return circumference * (1 - percentage);
-};
-
-const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-US').format(num);
-};
-
-const convertToLetterGrade = (rating) => {
-  if (rating >= 4.5) return 'A';
-  if (rating >= 3.5) return 'B';
-  if (rating >= 2.5) return 'C';
-  if (rating >= 1.5) return 'D';
-  return 'F';
 };
 </script>
 

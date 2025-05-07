@@ -973,10 +973,47 @@ function handleTicketQueueBack() {
 
 // Combined records for the documentation tab
 const combinedRecords = computed(() => {
+  // Get any stored records from localStorage
+  const storedRecords = localStorage.getItem('userRecords') 
+    ? JSON.parse(localStorage.getItem('userRecords')) 
+    : [];
+    
+  // Format stored records if they exist
+  const formattedStoredRecords = storedRecords.map(record => {
+    // Format date string properly if it's a date object
+    let displayDate = record.date;
+    if (typeof record.date === 'string' && record.date.includes('T')) {
+      displayDate = new Date(record.date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+    
+    return {
+      ...record,
+      date: displayDate
+    };
+  });
+  
+  // Combine with sample data for samples only if no stored records exist
+  // Or append them regardless for demo purposes
   return [
-    ...assessmentList.map(assessment => ({ ...assessment, type: 'assessment' })),
-    ...completedTickets.map(ticket => ({ ...ticket, type: 'ticket' }))
-  ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    ...formattedStoredRecords,
+    // Only include sample data if we don't have many real records
+    ...(formattedStoredRecords.length < 3 ? [
+      ...assessmentList.map(assessment => ({ ...assessment, type: 'assessment' })),
+      // Filter out sample completed tickets that might duplicate stored ones
+      ...completedTickets
+        .filter(ticket => !formattedStoredRecords.some(r => r.type === 'ticket' && r.id === ticket.id))
+        .map(ticket => ({ ...ticket, type: 'ticket' }))
+    ] : [])
+  ].sort((a, b) => {
+    // Sort by date, newest first (handle both string and Date objects)
+    const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+    const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+    return dateB - dateA;
+  });
 });
 
 // State for showing all records or just the first two

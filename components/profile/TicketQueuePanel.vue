@@ -239,8 +239,8 @@
               </div>
             </div>
             
-            <!-- Action buttons -->
-            <div class="pt-4 flex space-x-3">
+            <!-- Action buttons - Now only show if ticket status is not Complete -->
+            <div v-if="selectedTicket.status !== 'Complete'" class="pt-4 flex space-x-3">
               <button 
                 @click="showStatusUpdateForm = true" 
                 class="flex-1 py-2 px-4 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white"
@@ -253,6 +253,143 @@
               >
                 Cancel Request
               </button>
+            </div>
+            
+            <!-- Display a message for completed tickets -->
+            <div v-else class="pt-4 bg-green-900/20 border border-green-700/30 rounded-lg p-3">
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="text-green-300">This ticket has been completed and added to your records.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ticket Detail Popup -->
+      <div v-if="showTicketDetailPopup" class="fixed inset-0 flex items-center justify-center z-50 bg-black/70 overflow-y-auto py-8">
+        <div class="bg-gray-900 p-6 rounded-lg border border-blue-500/50 shadow-lg max-w-xl w-full mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Ticket #{{ selectedTicket.id }}</h3>
+            <button @click="showTicketDetailPopup = false" class="text-blue-300 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            <!-- Ticket Information -->
+            <div>
+              <div class="text-sm text-blue-300">Title</div>
+              <div class="text-white">{{ selectedTicket.title }}</div>
+            </div>
+            
+            <div>
+              <div class="text-sm text-blue-300">Description</div>
+              <div class="text-white bg-gray-800/50 p-3 rounded">
+                {{ selectedTicket.description || "No description provided" }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm text-blue-300">Requester Name</div>
+                <div class="text-white">{{ selectedTicket.name || "Not provided" }}</div>
+              </div>
+              
+              <div>
+                <div class="text-sm text-blue-300">Contact Information</div>
+                <div class="text-white">{{ selectedTicket.contact || "Not provided" }}</div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm text-blue-300">Status</div>
+                <div class="text-white">{{ selectedTicket.status }}</div>
+              </div>
+              
+              <div>
+                <div class="text-sm text-blue-300">Priority</div>
+                <div class="text-white capitalize">{{ selectedTicket.priority || "Medium" }}</div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm text-blue-300">Date Submitted</div>
+                <div class="text-white">{{ selectedTicket.date }}</div>
+              </div>
+              
+              <div>
+                <div class="text-sm text-blue-300">Expected Date</div>
+                <div class="text-white">{{ selectedTicket.expectedDate || "Not specified" }}</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm text-blue-300">Estimated Time</div>
+                <div class="text-white">{{ selectedTicket.estimatedTime || "Pending assessment" }}</div>
+              </div>
+              
+              <div>
+                <div class="text-sm text-blue-300">Added Value Potential</div>
+                <div class="flex items-center">
+                  <div class="h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" 
+                       :style="`width: ${(selectedTicket.valueRating || 5) * 10}%`"></div>
+                  <span class="ml-2 text-white">{{ selectedTicket.valueRating || 5 }}/10</span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="selectedTicket.requiredDeliverables">
+              <div class="text-sm text-blue-300">Requested Deliverables</div>
+              <div class="text-white bg-gray-800/50 p-3 rounded whitespace-pre-line">
+                {{ selectedTicket.requiredDeliverables }}
+              </div>
+            </div>
+
+            <div v-if="selectedTicket.attachments && selectedTicket.attachments.length > 0">
+              <div class="text-sm text-blue-300">Attachments</div>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <div v-for="(file, index) in selectedTicket.attachments" :key="index"
+                     class="bg-gray-800/80 p-2 rounded flex items-center text-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                  <span class="text-white truncate max-w-[150px]">{{ file.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action buttons - Now only show if ticket status is not Complete -->
+            <div v-if="selectedTicket.status !== 'Complete'" class="pt-4 flex space-x-3">
+              <button 
+                @click="showStatusUpdateForm = true" 
+                class="flex-1 py-2 px-4 bg-blue-600/80 hover:bg-blue-500/80 rounded text-white"
+              >
+                Update Status
+              </button>
+              <button 
+                @click="showCancelForm = true" 
+                class="flex-1 py-2 px-4 bg-red-600/80 hover:bg-red-500/80 rounded text-white"
+              >
+                Cancel Request
+              </button>
+            </div>
+            
+            <!-- Display a message for completed tickets -->
+            <div v-else class="pt-4 bg-green-900/20 border border-green-700/30 rounded-lg p-3">
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="text-green-300">This ticket has been completed and added to your records.</span>
+              </div>
             </div>
           </div>
         </div>
@@ -957,6 +1094,46 @@ const submitStatusUpdate = () => {
   // In a real application, this would be an API call to update the ticket status
   selectedTicket.value.status = statusUpdateForm.value.status;
   
+  // Update the ticket in the main list
+  const ticketIndex = tickets.value.findIndex(t => t.id === selectedTicket.value.id);
+  if (ticketIndex !== -1) {
+    tickets.value[ticketIndex] = { ...selectedTicket.value };
+  }
+  
+  // If ticket is marked as complete, save it to localStorage for display in Records tab
+  if (statusUpdateForm.value.status === 'Complete') {
+    // Get existing records or initialize empty array
+    const existingRecords = localStorage.getItem('userRecords') 
+      ? JSON.parse(localStorage.getItem('userRecords')) 
+      : [];
+    
+    // Format the ticket for records display
+    const recordEntry = {
+      type: 'ticket',
+      id: selectedTicket.value.id,
+      title: selectedTicket.value.title,
+      user: selectedTicket.value.name || 'Anonymous',
+      status: 'Completed',
+      date: new Date().toISOString(),
+      completedDate: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }),
+      comment: statusUpdateForm.value.comment || `This ticket has been completed successfully.`,
+      value: calculateTicketValue(selectedTicket.value)
+    };
+    
+    // Add to records
+    existingRecords.push(recordEntry);
+    
+    // Save back to localStorage
+    localStorage.setItem('userRecords', JSON.stringify(existingRecords));
+    
+    // Notify user that the ticket has been added to records
+    console.log('Ticket added to records:', recordEntry);
+  }
+  
   // Reset form
   statusUpdateForm.value = {
     status: '',
@@ -967,6 +1144,37 @@ const submitStatusUpdate = () => {
   // Show success message and close form
   showStatusUpdateForm.value = false;
   showStatusUpdateSuccess.value = true;
+};
+
+// Calculate ticket value based on priority and value rating
+const calculateTicketValue = (ticket) => {
+  const baseValue = 500; // Base value for any completed ticket
+  
+  // Priority multiplier
+  let priorityMultiplier = 1;
+  switch (ticket.priority) {
+    case 'urgent':
+      priorityMultiplier = 2.0;
+      break;
+    case 'high':
+      priorityMultiplier = 1.5;
+      break;
+    case 'medium':
+      priorityMultiplier = 1.0;
+      break;
+    case 'low':
+      priorityMultiplier = 0.8;
+      break;
+    default:
+      priorityMultiplier = 1.0;
+  }
+  
+  // Value rating impact (scale of 1-10)
+  const valueRating = ticket.valueRating || 5;
+  const valueImpact = (valueRating / 5) * 1.5;
+  
+  // Calculate final value
+  return Math.round(baseValue * priorityMultiplier * valueImpact);
 };
 
 // Cancellation form

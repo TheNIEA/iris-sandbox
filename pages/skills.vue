@@ -117,6 +117,17 @@
             <h3 class="text-xl font-semibold text-white mb-4">What Would You:</h3>
             
             <form @submit.prevent="submitAssessment" class="space-y-5">
+              <!-- Name Field -->
+              <div class="space-y-2">
+                <label class="block text-sm text-gray-300">Your Name</label>
+                <input 
+                  v-model="valueForm.name" 
+                  type="text" 
+                  class="w-full px-4 py-2 rounded-lg bg-gray-800/80 border border-blue-700/30 text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50"
+                  placeholder="Enter your name"
+                />
+              </div>
+              
               <!-- Value Inputs -->
               <div class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -135,7 +146,7 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label class="block text-sm text-gray-300">Pay to Experience ($)</label>
+                    <label class="block text-sm text-gray-300">Pay to Experience or Utilize ($)</label>
                     <div class="relative">
                       <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input 
@@ -278,8 +289,14 @@
                   <div 
                     v-for="(assessment, index) in userSkillAssessments[selectedSkill.id]" 
                     :key="index"
-                    class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30"
+                    class="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-blue-800/30 cursor-pointer hover:bg-white/10 transition-all"
+                    @click="showAssessmentDetail(assessment)"
                   >
+                    <!-- Added name display -->
+                    <div class="mb-2 text-white font-medium">
+                      {{ assessment.name || 'Anonymous' }}
+                    </div>
+                    
                     <div class="grid grid-cols-3 gap-4 mb-3">
                       <div>
                         <div class="text-xs text-gray-500">To Learn</div>
@@ -313,6 +330,107 @@
         </div>
       </div>
     </div>
+    
+    <!-- Assessment Detail Modal -->
+    <div 
+      v-if="showAssessmentModal" 
+      class="fixed inset-0 flex items-center justify-center z-50 bg-black/70 backdrop-blur-sm px-4"
+    >
+      <div class="bg-gray-900/90 backdrop-blur-md rounded-xl border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.25)] p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-white">Assessment Details</h3>
+          <button 
+            @click="closeAssessmentDetail" 
+            class="p-2 rounded-full hover:bg-gray-800/50 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="space-y-5">
+          <!-- Assessment Submitter -->
+          <div class="flex items-center space-x-4 mb-4">
+            <div class="w-12 h-12 bg-blue-900/40 rounded-full flex items-center justify-center text-blue-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-white font-medium">{{ currentAssessment?.name || 'Anonymous' }}</div>
+              <div class="text-xs text-gray-400">Submitted on {{ formatDate(currentAssessment?.date) }}</div>
+            </div>
+          </div>
+          
+          <!-- Skill Info -->
+          <div class="p-3 bg-blue-900/20 rounded-lg border border-blue-800/40">
+            <div class="flex items-center">
+              <span class="text-xl mr-2">{{ selectedSkill?.icon }}</span>
+              <div class="text-blue-300 font-medium">{{ selectedSkill?.name }}</div>
+            </div>
+          </div>
+          
+          <!-- Value Assessment -->
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Value Metrics -->
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-blue-900/20 p-3 rounded-lg border border-blue-800/40">
+                <div class="text-xs text-gray-400 mb-1">To Learn</div>
+                <div class="text-lg font-semibold text-blue-400">${{ formatNumber(currentAssessment?.learnValue) }}</div>
+              </div>
+              
+              <div class="bg-blue-900/20 p-3 rounded-lg border border-blue-800/40">
+                <div class="text-xs text-gray-400 mb-1">To Experience</div>
+                <div class="text-lg font-semibold text-blue-400">${{ formatNumber(currentAssessment?.applyValue) }}</div>
+              </div>
+              
+              <div class="bg-blue-900/20 p-3 rounded-lg border border-blue-800/40">
+                <div class="text-xs text-gray-400 mb-1">To Master</div>
+                <div class="text-lg font-semibold text-blue-400">${{ formatNumber(currentAssessment?.masterValue) }}</div>
+              </div>
+            </div>
+            
+            <!-- Total Value -->
+            <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-4 rounded-lg border border-blue-700/40">
+              <div class="text-sm text-gray-300 mb-1">Total Value Assessment</div>
+              <div class="text-2xl font-bold text-white">${{ formatNumber(getTotalValue(currentAssessment)) }}</div>
+            </div>
+            
+            <!-- Importance Rating -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <div class="text-sm text-gray-300">Importance Rating</div>
+                <div class="text-blue-300 font-medium">{{ currentAssessment?.importance }}/10</div>
+              </div>
+              <div class="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                <div 
+                  class="h-full bg-gradient-to-r from-blue-500 to-purple-500" 
+                  :style="{ width: `${(currentAssessment?.importance / 10) * 100}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Assessment Comment -->
+          <div>
+            <div class="text-sm text-gray-300 mb-2">Assessment Feedback</div>
+            <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700/40">
+              <p class="text-white italic">"{{ currentAssessment?.comment }}"</p>
+            </div>
+          </div>
+          
+          <!-- Calculated Impact -->
+          <div>
+            <div class="text-sm text-gray-300 mb-2">Calculated Envalumental Impact</div>
+            <div class="p-3 bg-gradient-to-r from-green-900/20 to-green-800/20 rounded-lg border border-green-800/40 flex justify-between items-center">
+              <div class="text-green-300">Contribution to Khoury's wealth:</div>
+              <div class="text-green-400 font-semibold">+${{ formatNumber(calculateImpact(currentAssessment)) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -324,9 +442,12 @@ const activeView = ref('list');
 const selectedSkill = ref(null);
 const formActive = ref(false);
 const userSkillAssessments = ref({});
+const showAssessmentModal = ref(false);
+const currentAssessment = ref(null);
 
 // Value form for assessments
 const valueForm = reactive({
+  name: '',
   learnValue: 20,
   applyValue: 50,
   masterValue: 100,
@@ -426,6 +547,7 @@ const backToList = () => {
 const showAddValueForm = () => {
   formActive.value = true;
   // Reset form values
+  valueForm.name = '';
   valueForm.learnValue = 20;
   valueForm.applyValue = 50;
   valueForm.masterValue = 100;
@@ -448,21 +570,80 @@ const submitAssessment = () => {
     userSkillAssessments.value[skillId] = [];
   }
   
-  // Add new assessment with current date
-  userSkillAssessments.value[skillId].push({
+  // Create new assessment with additional data
+  const newAssessment = {
+    name: valueForm.name,
     learnValue: valueForm.learnValue,
     applyValue: valueForm.applyValue,
     masterValue: valueForm.masterValue,
     importance: valueForm.importance,
     comment: valueForm.comment,
-    date: new Date()
-  });
+    date: new Date(),
+    skill: selectedSkill.value.name,
+    skillId: skillId,
+    icon: selectedSkill.value.icon,
+    category: selectedSkill.value.category
+  };
   
-  // Save to localStorage for persistence
+  // Add to skill-specific assessments
+  userSkillAssessments.value[skillId].push(newAssessment);
+  
+  // Save to localStorage for skill assessments
   localStorage.setItem('userSkillAssessments', JSON.stringify(userSkillAssessments.value));
+  
+  // Add to records collection for display in the Records tab
+  saveAssessmentToRecords(newAssessment);
   
   // Close the form
   formActive.value = false;
+};
+
+// Function to save assessment to records
+const saveAssessmentToRecords = (assessment) => {
+  // Get existing records or initialize empty array
+  const existingRecords = localStorage.getItem('userRecords') 
+    ? JSON.parse(localStorage.getItem('userRecords')) 
+    : [];
+  
+  // Format the assessment for records display
+  const recordEntry = {
+    type: 'assessment',
+    skill: assessment.skill,
+    skillId: assessment.skillId,
+    icon: assessment.icon,
+    category: assessment.category,
+    user: assessment.name || 'Anonymous',
+    rating: calculateRating(assessment),
+    values: {
+      learn: assessment.learnValue,
+      apply: assessment.applyValue,
+      master: assessment.masterValue
+    },
+    importance: assessment.importance,
+    comment: assessment.comment,
+    date: assessment.date,
+    impact: calculateImpact(assessment)
+  };
+  
+  // Add to records
+  existingRecords.push(recordEntry);
+  
+  // Save back to localStorage
+  localStorage.setItem('userRecords', JSON.stringify(existingRecords));
+};
+
+// Calculate rating based on assessment values and importance
+const calculateRating = (assessment) => {
+  // Convert the monetary values to a 0-5 scale
+  // Using a weighted average that factors in the importance
+  const totalValue = assessment.learnValue + assessment.applyValue + assessment.masterValue;
+  const weightedValue = totalValue * (assessment.importance / 10);
+  
+  // Scale to a rating between 1-5
+  const baseRating = Math.min(5, Math.max(1, (weightedValue / 500) * 5));
+  
+  // Return with one decimal place
+  return Math.round(baseRating * 10) / 10;
 };
 
 // Utility functions
@@ -486,6 +667,28 @@ onMounted(() => {
     userSkillAssessments.value = JSON.parse(savedAssessments);
   }
 });
+
+// Show assessment detail
+const showAssessmentDetail = (assessment) => {
+  currentAssessment.value = assessment;
+  showAssessmentModal.value = true;
+};
+
+// Close assessment detail
+const closeAssessmentDetail = () => {
+  showAssessmentModal.value = false;
+  currentAssessment.value = null;
+};
+
+// Calculate total value
+const getTotalValue = (assessment) => {
+  return assessment.learnValue + assessment.applyValue + assessment.masterValue;
+};
+
+// Calculate impact
+const calculateImpact = (assessment) => {
+  return getTotalValue(assessment) * (assessment.importance / 10);
+};
 </script>
 
 <style scoped>

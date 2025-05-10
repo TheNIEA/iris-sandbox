@@ -1,255 +1,211 @@
 <template>
-  <div class="global-view fixed inset-0 w-screen h-screen z-50">
-    <!-- Three.js canvas where the globe will be rendered -->
-    <canvas ref="globeCanvas" class="absolute inset-0 w-full h-full"></canvas>
-    
-    <!-- Back button -->
-    <button 
-      @click="$emit('back')" 
-      class="absolute top-4 left-4 z-10 p-2 rounded-full bg-gray-800/60 hover:bg-gray-700/80 text-white backdrop-blur-sm transition-colors"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
-      </svg>
-    </button>
-      
-    <!-- Controls overlay -->
-    <div class="absolute bottom-4 right-4 flex items-center space-x-3 z-10">
-      <div class="zoom-controls flex flex-col space-y-2">
-        <button 
-          @click="zoomIn" 
-          class="p-2 rounded-full bg-blue-600/60 hover:bg-blue-500/80 text-white backdrop-blur-sm transition-colors"
-          title="Zoom In"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <button 
-          @click="zoomOut" 
-          class="p-2 rounded-full bg-blue-600/60 hover:bg-blue-500/80 text-white backdrop-blur-sm transition-colors"
-          title="Zoom Out"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
-          </svg>
-        </button>
-      </div>
-      
-      <button 
-        @click="resetView" 
-        class="p-2 rounded-full bg-blue-600/60 hover:bg-blue-500/80 text-white backdrop-blur-sm transition-colors"
-        title="Reset View"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+  <div class="global-view h-full w-full">
+    <!-- Main canvas container for the globe visualization -->
+    <div ref="canvasContainer" class="relative h-full w-full">
+      <!-- Navigation Back Button (fixed position) -->
+      <button @click="$emit('back')" class="absolute top-5 left-5 z-10 p-2 bg-gray-900/70 hover:bg-gray-800/80 rounded-full transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
       </button>
-    </div>
-    
-    <!-- Zoom level indicator -->
-    <div class="absolute bottom-4 left-4 bg-gray-800/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-      Zoom: {{ Math.round(zoomLevel * 100) }}%
-    </div>
-
-    <!-- Profile preview/detail panel that appears when a profile node is selected -->
-    <transition name="slide-up">
-      <div v-if="selectedProfile" class="profile-preview absolute bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-blue-500/30 p-4 z-20">
-        <div class="flex items-start max-w-3xl mx-auto">
-          <div class="relative mr-4">
-            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-400">
-              <img :src="selectedProfile.image" alt="Profile" class="w-full h-full object-cover" />
+      
+      <!-- Loading state while globe initializes -->
+      <div v-if="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/80 z-20">
+        <div class="w-16 h-16 border-4 border-t-blue-500 border-blue-200/20 rounded-full animate-spin mb-4"></div>
+        <p class="text-blue-300">Loading global view...</p>
+      </div>
+      
+      <!-- Canvas element where the 3D globe will render -->
+      <canvas ref="globeCanvas" class="w-full h-full"></canvas>
+      
+      <!-- Profile detail popup that appears when clicking a node -->
+      <div v-if="selectedProfile" 
+        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 max-w-sm w-full bg-gray-900/90 backdrop-blur-md rounded-xl border border-blue-500/30 shadow-lg z-30 p-4"
+        :style="{ maxWidth: '320px' }"
+      >
+        <div class="flex items-start">
+          <!-- Profile image -->
+          <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500 mr-4">
+            <img :src="selectedProfile.image" :alt="selectedProfile.name" class="w-full h-full object-cover" />
+          </div>
+          
+          <!-- Profile details -->
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-white">{{ selectedProfile.name }}</h3>
+            <div class="flex items-center text-sm text-blue-300 mb-1">
+              <span class="mr-2">{{ selectedProfile.role }}</span>
+              <span class="w-1 h-1 bg-blue-500 rounded-full"></span>
+              <span class="ml-2">{{ selectedProfile.connections }} connections</span>
             </div>
-            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
-              {{ selectedProfile.level }}
+            <div class="text-xs text-gray-400">
+              {{ selectedProfile.location }}
             </div>
           </div>
           
-          <div class="flex-1">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-white text-lg font-semibold">{{ selectedProfile.name }}</h3>
-                <p class="text-blue-300 text-sm">{{ selectedProfile.title }}</p>
-              </div>
-              
-              <button @click="selectedProfile = null" class="text-gray-400 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </button>
-            </div>
-            
-            <div class="mt-2">
-              <div class="flex items-center mb-1">
-                <span class="text-gray-400 text-sm mr-2">Envalumental Wealth:</span>
-                <span class="text-blue-300 font-medium">${{ formatNumber(selectedProfile.wealth) }}</span>
-              </div>
-              
-              <div class="flex items-center">
-                <span class="text-gray-400 text-sm mr-2">Top Skills:</span>
-                <div class="flex flex-wrap">
-                  <span v-for="(skill, idx) in selectedProfile.skills" :key="idx" 
-                    class="inline-block text-xs mr-1 mb-1 px-2 py-0.5 rounded-full"
-                    :class="[
-                      idx % 2 === 0 ? 'bg-blue-500/30 text-blue-200' : 'bg-purple-500/30 text-purple-200'
-                    ]"
-                  >
-                    {{ skill }}
-                  </span>
-                </div>
+          <!-- Close button -->
+          <button @click="selectedProfile = null" class="text-gray-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Skills and contribution -->
+        <div class="mt-3 grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs text-gray-500">Top Skills</div>
+            <div class="space-y-1 mt-1">
+              <div v-for="(skill, index) in selectedProfile.skills.slice(0, 3)" :key="index" class="flex items-center">
+                <span class="w-1.5 h-1.5 rounded-full mr-1.5" 
+                  :class="skill.category === 'technology' ? 'bg-blue-500' : skill.category === 'design' ? 'bg-purple-500' : 'bg-green-500'"></span>
+                <span class="text-xs text-gray-300">{{ skill.name }}</span>
               </div>
             </div>
-            
-            <div class="mt-3 flex justify-end">
-              <button 
-                @click="viewFullProfile(selectedProfile)"
-                class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition-colors flex items-center"
-              >
-                <span>View Full Profile</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </button>
-            </div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500">Contribution</div>
+            <div class="text-lg font-semibold text-blue-400">${{ formatNumber(selectedProfile.contribution) }}</div>
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="flex space-x-2 mt-3">
+          <button @click="viewProfile(selectedProfile.id)" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded">
+            View Profile
+          </button>
+          <button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 010 2zm0 7a1 1 0 110-2 1 1 010 2zm0 7a1 1 0 110-2 1 1 010 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Controls and legend overlay -->
+    <div class="absolute bottom-5 right-5 space-y-2">
+      <div class="flex justify-end">
+        <div class="bg-gray-900/70 backdrop-blur-md p-2 rounded-lg shadow-lg border border-gray-800">
+          <!-- Zoom controls -->
+          <div class="flex flex-col space-y-1">
+            <button @click="zoomIn" class="p-1.5 hover:bg-gray-800 rounded-md text-gray-400 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+            <div class="h-px w-full bg-gray-800"></div>
+            <button @click="zoomOut" class="p-1.5 hover:bg-gray-800 rounded-md text-gray-400 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-    </transition>
-    
-    <!-- Loading indicator -->
-    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-gray-900/70 z-30">
-      <div class="flex flex-col items-center">
-        <div class="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
-        <div class="mt-4 text-blue-300">Loading profiles...</div>
-      </div>
-    </div>
-
-    <div class="absolute top-4 right-4 z-10 bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 text-white text-sm max-w-xs">
-      <div class="flex items-center justify-between">
-        <div class="font-medium">Profile Globe</div>
-        <div class="text-xs text-blue-300">{{ profiles.length }} profiles</div>
-      </div>
-      <div class="text-gray-300 text-xs mt-1">
-        <span class="font-medium">Zoom</span> with the scroll wheel or buttons, 
-        <span class="font-medium">rotate</span> by dragging, and 
-        <span class="font-medium">tap</span> to select a profile.
+      
+      <div class="flex justify-end">
+        <div class="bg-gray-900/70 backdrop-blur-md p-3 rounded-lg shadow-lg border border-gray-800 max-w-xs">
+          <!-- Legend -->
+          <div class="text-xs text-gray-500 mb-2">Node Colors</div>
+          <div class="space-y-1.5">
+            <div class="flex items-center">
+              <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+              <span class="text-xs text-gray-300">Technology Skills</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-3 h-3 rounded-full bg-purple-500 mr-2"></span>
+              <span class="text-xs text-gray-300">Design Skills</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+              <span class="text-xs text-gray-300">Business Skills</span>
+            </div>
+          </div>
+          
+          <div class="mt-3">
+            <div class="text-xs text-gray-500 mb-1">Node Size</div>
+            <div class="flex items-center">
+              <div class="flex items-center justify-between w-full">
+                <div class="flex items-center">
+                  <div class="w-2 h-2 bg-white rounded-full mr-1.5"></div>
+                  <span class="text-xs text-gray-400">Lower</span>
+                </div>
+                <div class="w-16 h-px bg-gradient-to-r from-gray-600 to-gray-400"></div>
+                <div class="flex items-center">
+                  <div class="w-4 h-4 bg-white rounded-full mr-1.5"></div>
+                  <span class="text-xs text-gray-400">Higher</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-1 text-xs text-gray-500">Contribution Value</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { formatNumber, formatCurrency } from '~/utils/formatter';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { formatNumber } from '~/utils/formatter';
 
-// Props and emits
-const emit = defineEmits(['view-profile', 'back']);
+// Define emits
+const emit = defineEmits(['back', 'view-profile']);
 
-// Reactive state
+// State variables
+const canvasContainer = ref(null);
 const globeCanvas = ref(null);
-const isLoading = ref(true);
-const zoomLevel = ref(1);
+const loading = ref(true);
 const selectedProfile = ref(null);
 
-// Three.js objects
+// Three.js variables
 let scene, camera, renderer, controls;
-let globe, profileNodes = [];
+let globe, nodes = [];
+let raycaster, mouse;
 
-// Generate 100 sample profiles
-const profiles = ref(Array.from({ length: 100 }, (_, i) => {
-  // Generate random skills
-  const allSkills = ['VR/AR', '3D Modeling', 'AI/ML', 'Graphic Design', 'UX Design', 
-    'Frontend Dev', 'Backend Dev', 'Game Design', 'Music Production', 'Video Editing',
-    'Writing', 'Marketing', 'Data Analysis', 'Teaching', 'Public Speaking', 
-    'Project Management', 'Leadership'];
-  
-  const skills = [];
-  const numSkills = Math.floor(Math.random() * 3) + 1; // 1-3 skills
-  for (let j = 0; j < numSkills; j++) {
-    const skill = allSkills[Math.floor(Math.random() * allSkills.length)];
-    if (!skills.includes(skill)) {
-      skills.push(skill);
-    }
-  }
-  
-  return {
-    id: `profile-${i + 1}`,
-    name: generateName(),
-    image: `https://i.pravatar.cc/150?img=${(i % 70) + 1}`,
-    title: generateTitle(),
-    level: Math.floor(Math.random() * 5) + 1,
-    wealth: Math.floor(Math.random() * 500000) + 10000,
-    skills,
-    // 3D position will be set during initialization
-    position: {
-      lat: (Math.random() * 180) - 90, // -90 to 90 degrees (latitude)
-      lng: (Math.random() * 360) - 180, // -180 to 180 degrees (longitude)
-    }
-  };
-}));
+// For profile data
+const profilesData = ref([]);
 
-// Helper function to generate a random name
-function generateName() {
-  const firstNames = ['James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 
-    'William', 'Elizabeth', 'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica', 
-    'Thomas', 'Sarah', 'Charles', 'Karen', 'Sofia', 'Aiden', 'Ella', 'Jackson', 'Liam', 'Emma'];
-  
-  const lastNames = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 
-    'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 
-    'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Lee', 'Nguyen', 'Chen', 'Patel'];
+// Fetch data from API
+const fetchProfiles = async () => {
+  try {
+    // In a real implementation, this would call an API
+    // const response = await fetch('/api/profiles');
+    // profilesData.value = await response.json();
     
-  return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
-}
+    // For now, we'll just use an empty array to be populated later
+    profilesData.value = [];
+    return profilesData.value;
+  } catch (error) {
+    console.error('Failed to fetch profiles:', error);
+    return [];
+  }
+};
 
-// Helper function to generate a random title
-function generateTitle() {
-  const titles = [
-    'Digital Artist', 'Software Engineer', 'UX Designer', 'Product Manager', 
-    'Data Scientist', 'AR/VR Developer', '3D Modeler', 'AI Researcher', 
-    'Creative Director', 'Blockchain Developer', 'Game Designer', 'Content Creator',
-    'Educator', 'Music Producer', 'Visual Storyteller', 'Web Developer', 
-    'Knowledge Engineer', 'Community Builder', 'Systems Architect', 'Immersive Experience Designer'
-  ];
-  
-  return titles[Math.floor(Math.random() * titles.length)];
-}
-
-// Convert latitude and longitude to 3D coordinates
-function latLngToVector3(lat, lng, radius) {
-  const phi = (90 - lat) * Math.PI / 180;
-  const theta = (lng + 180) * Math.PI / 180;
-  
-  return new THREE.Vector3(
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta)
-  );
-}
-
-// Initialize and setup the 3D scene
-function initScene() {
-  // Create scene
+// Initialize Three.js scene
+const initScene = () => {
+  // Initialize scene, camera, renderer
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x050A1F); // Dark blue background
   
-  // Create camera
-  const aspectRatio = window.innerWidth / window.innerHeight;
-  camera = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 1000);
-  camera.position.z = 5;
+  const width = canvasContainer.value.clientWidth;
+  const height = canvasContainer.value.clientHeight;
   
-  // Create renderer
-  renderer = new THREE.WebGLRenderer({ 
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera.position.z = 10;
+  
+  renderer = new THREE.WebGLRenderer({
     canvas: globeCanvas.value,
     antialias: true,
     alpha: true
   });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   renderer.setPixelRatio(window.devicePixelRatio);
   
   // Add ambient light
-  const ambientLight = new THREE.AmbientLight(0x404040, 1);
+  const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
   scene.add(ambientLight);
   
   // Add directional light
@@ -257,32 +213,69 @@ function initScene() {
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
   
-  // Create orbit controls for camera manipulation
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.rotateSpeed = 0.5;
-  controls.minDistance = 3; // Minimum zoom level
-  controls.maxDistance = 10; // Maximum zoom level
+  // Initialize raycaster for interaction
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
   
-  // Create the globe (wire sphere)
-  const globeGeometry = new THREE.SphereGeometry(2, 32, 32);
-  const globeMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0x1E40AF, // Medium blue color
+  // Create globe
+  createGlobe();
+  
+  // Handle window resize
+  window.addEventListener('resize', onWindowResize);
+  
+  // Handle mouse movement for interactivity
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('click', onMouseClick);
+  
+  // Start animation loop
+  animate();
+};
+
+// Create globe mesh
+const createGlobe = () => {
+  // Create wireframe sphere for the globe
+  const geometry = new THREE.SphereGeometry(4, 32, 32);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x1a365d, // Dark blue color
     wireframe: true,
-    opacity: 0.3,
-    transparent: true
+    transparent: true,
+    opacity: 0.3
   });
-  globe = new THREE.Mesh(globeGeometry, globeMaterial);
+  
+  globe = new THREE.Mesh(geometry, material);
   scene.add(globe);
   
-  // Add a glow effect (larger transparent sphere)
-  const glowGeometry = new THREE.SphereGeometry(2.1, 32, 32);
-  const glowMaterial = new THREE.MeshBasicMaterial({
-    color: 0x3B82F6,
-    transparent: true,
-    opacity: 0.1,
-    side: THREE.BackSide
+  // Add subtle glow
+  const glowGeometry = new THREE.SphereGeometry(4.1, 32, 32);
+  const glowMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      c: { value: 0.2 },
+      p: { value: 4.5 },
+      glowColor: { value: new THREE.Color(0x3b82f6) },
+      viewVector: { value: camera.position }
+    },
+    vertexShader: `
+      uniform vec3 viewVector;
+      uniform float c;
+      uniform float p;
+      varying float intensity;
+      void main() {
+        vec3 vNormal = normalize(normalMatrix * normal);
+        vec3 vNormel = normalize(normalMatrix * viewVector);
+        intensity = pow(c - dot(vNormal, vNormel), p);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 glowColor;
+      varying float intensity;
+      void main() {
+        gl_FragColor = vec4(glowColor, intensity * 0.3);
+      }
+    `,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
   });
   const glow = new THREE.Mesh(glowGeometry, glowMaterial);
   scene.add(glow);
@@ -293,137 +286,122 @@ function initScene() {
   // Add a raycaster for interaction
   setupInteraction();
   
-  // Signal that loading is complete
-  isLoading.value = false;
-  
-  // Start animation loop
-  animate();
-}
+  const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+  scene.add(glowMesh);
+};
 
-// Create visual nodes for each profile
-function createProfileNodes() {
-  // Clear any existing profile nodes
-  profileNodes.forEach(node => scene.remove(node));
-  profileNodes = [];
+// Position nodes on the globe based on real data
+const createNodes = (profiles) => {
+  // Clear existing nodes
+  nodes.forEach(node => {
+    scene.remove(node);
+  });
+  nodes = [];
   
-  // Create a reusable geometry for all nodes
-  const nodeGeometry = new THREE.SphereGeometry(0.05, 16, 16);
-  
-  // Create nodes for each profile
-  profiles.value.forEach((profile, index) => {
-    // Determine node color based on skills
-    let nodeColor;
-    if (profile.skills.includes('VR/AR') || profile.skills.includes('3D Modeling')) {
-      nodeColor = 0x60A5FA; // Blue for technical skills
-    } else if (profile.skills.includes('Graphic Design') || profile.skills.includes('UX Design')) {
-      nodeColor = 0x8B5CF6; // Purple for design skills
-    } else if (profile.skills.includes('AI/ML') || profile.skills.includes('Data Analysis')) {
-      nodeColor = 0x34D399; // Green for data skills
-    } else {
-      nodeColor = 0xF59E0B; // Yellow for other skills
+  // Create a node for each profile
+  profiles.forEach((profile, index) => {
+    // Calculate node position on the globe using spherical coordinates
+    // In a real implementation, this would be based on meaningful criteria like skill categories
+    const phi = Math.acos(-1 + (2 * index) / profiles.length); // Latitude
+    const theta = Math.sqrt(profiles.length * Math.PI) * phi; // Longitude
+    
+    // Convert spherical coordinates to Cartesian
+    const radius = 4; // Matches globe radius
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.sin(phi) * Math.sin(theta);
+    const z = radius * Math.cos(phi);
+    
+    // Determine node color based on primary skill category
+    let color;
+    switch (profile.primarySkillCategory) {
+      case 'technology':
+        color = 0x3b82f6; // Blue
+        break;
+      case 'design':
+        color = 0xa855f7; // Purple
+        break;
+      default:
+        color = 0x10b981; // Green for business/other
     }
     
-    // Create a material with the determined color
-    const nodeMaterial = new THREE.MeshBasicMaterial({ 
-      color: nodeColor,
-      opacity: 0.8,
-      transparent: true
-    });
+    // Determine node size based on contribution value
+    const maxContribution = Math.max(...profiles.map(p => p.contribution));
+    const minSize = 0.05;
+    const maxSize = 0.15;
+    const size = minSize + (maxSize - minSize) * (profile.contribution / maxContribution);
     
-    // Create the node mesh
+    // Create node geometry
+    const nodeGeometry = new THREE.SphereGeometry(size, 16, 16);
+    const nodeMaterial = new THREE.MeshBasicMaterial({ color });
     const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
     
-    // Position the node on the globe using latitude and longitude
-    const position = latLngToVector3(profile.position.lat, profile.position.lng, 2);
-    node.position.copy(position);
-    
-    // Store a reference to the profile data
-    node.userData = { profileId: profile.id };
+    // Position node
+    node.position.set(x, y, z);
+    node.userData = { profileId: profile.id }; // Store reference to profile
     
     // Add the node to the scene
     scene.add(node);
-    profileNodes.push(node);
-    
-    // Create a pulsing effect for the node
-    const pulseScale = 1 + (index % 5) * 0.2; // Variety in pulse
-    const pulseSpeed = 0.5 + (index % 3) * 0.2; // Variety in speed
-    
-    // Store animation properties
-    node.userData.animation = {
-      pulseScale,
-      pulseSpeed,
-      time: Math.random() * Math.PI * 2 // Random starting phase
-    };
+    nodes.push(node);
   });
-}
+};
 
-// Setup interaction with nodes
-function setupInteraction() {
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
+// Handle window resize
+const onWindowResize = () => {
+  if (!canvasContainer.value) return;
   
-  // Handle mouse click/tap
-  globeCanvas.value.addEventListener('click', (event) => {
-    event.preventDefault();
+  const width = canvasContainer.value.clientWidth;
+  const height = canvasContainer.value.clientHeight;
+  
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+};
+
+// Handle mouse movement for hover effects
+const onMouseMove = (event) => {
+  // Calculate mouse position in normalized device coordinates
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+};
+
+// Handle mouse click for selection
+const onMouseClick = (event) => {
+  // Calculate mouse position in normalized device coordinates
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  
+  // Update the picking ray with the camera and mouse position
+  raycaster.setFromCamera(mouse, camera);
+  
+  // Calculate objects intersecting the picking ray
+  const intersects = raycaster.intersectObjects(nodes);
+  
+  if (intersects.length > 0) {
+    const clickedNode = intersects[0].object;
+    const profileId = clickedNode.userData.profileId;
+    const profile = profilesData.value.find(p => p.id === profileId);
     
-    // Calculate mouse position in normalized device coordinates
-    const rect = globeCanvas.value.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    
-    // Update the ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera);
-    
-    // Find intersections with profile nodes
-    const intersects = raycaster.intersectObjects(profileNodes);
-    
-    if (intersects.length > 0) {
-      // Get the profile ID from the first intersected object
-      const profileId = intersects[0].object.userData.profileId;
-      
-      // Find the matching profile
-      const profile = profiles.value.find(p => p.id === profileId);
-      
-      // Update the selected profile
-      if (profile) {
-        selectedProfile.value = profile;
-        
-        // If zoomed in enough, automatically view full profile
-        if (zoomLevel.value > 2.2) {
-          viewFullProfile(profile);
-        }
-      }
-    } else {
-      // Click on empty space closes the profile preview if not clicking on UI elements
-      if (!event.target.closest('.profile-preview') && !event.target.closest('button')) {
-        selectedProfile.value = null;
-      }
+    if (profile) {
+      selectedProfile.value = profile;
     }
-  });
-}
+  } else {
+    // Clicked empty space, clear selection
+    selectedProfile.value = null;
+  }
+};
 
 // Animation loop
-function animate() {
+const animate = () => {
   requestAnimationFrame(animate);
   
   // Update controls
   if (controls) controls.update();
   
-  // Update zoom level based on camera distance
-  if (camera) {
-    const distance = camera.position.length();
-    // Convert distance to zoom level (inverse relationship)
-    // When distance is minDistance, zoom is maximum
-    // When distance is maxDistance, zoom is minimum
-    const minZoom = 0.5;
-    const maxZoom = 2.5;
-    const normalized = 1 - (distance - controls.minDistance) / (controls.maxDistance - controls.minDistance);
-    zoomLevel.value = minZoom + normalized * (maxZoom - minZoom);
-  }
-  
-  // Animate globe rotation
+  // Slowly rotate the globe
   if (globe) {
-    globe.rotation.y += 0.0005; // Slow continuous rotation
+    globe.rotation.y += 0.0005;
   }
   
   // Animate profile nodes
@@ -443,63 +421,53 @@ function animate() {
   });
   
   // Render the scene
-  if (renderer) renderer.render(scene, camera);
-}
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
+  }
+};
 
-// Handle window resize
-function handleResize() {
-  if (!renderer || !camera) return;
+// Navigation functions
+const zoomIn = () => {
+  if (controls && controls.minDistance < controls.maxDistance) {
+    camera.position.z = Math.max(camera.position.z - 1, controls.minDistance);
+    controls.update();
+  }
+};
+
+const zoomOut = () => {
+  if (controls && controls.maxDistance > controls.minDistance) {
+    camera.position.z = Math.min(camera.position.z + 1, controls.maxDistance);
+    controls.update();
+  }
+};
+
+// Function to handle viewing a profile in detail
+const viewProfile = (profileId) => {
+  emit('view-profile', profileId);
+};
+
+// Initialize component
+onMounted(async () => {
+  // Fetch profile data
+  const profiles = await fetchProfiles();
   
-  // Update camera aspect ratio
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  // Initialize the 3D scene
+  initScene();
   
-  // Update renderer size
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-// Control functions
-function zoomIn() {
-  if (controls) {
-    controls.zoomIn(0.5);
-  }
-}
-
-function zoomOut() {
-  if (controls) {
-    controls.zoomOut(0.5);
-  }
-}
-
-function resetView() {
-  if (controls) {
-    controls.reset();
-  }
-}
-
-function viewFullProfile(profile) {
-  emit('view-profile', profile.id);
-}
-
-// Lifecycle hooks
-onMounted(() => {
-  // Initialize the 3D scene after a short delay
-  // This ensures the DOM is fully rendered
-  setTimeout(() => {
-    initScene();
-    
-    // Add window resize handler
-    window.addEventListener('resize', handleResize);
-    
-    // Start the globe with a random rotation
-    if (globe) {
-      globe.rotation.y = Math.random() * Math.PI * 2;
-    }
-  }, 100);
+  // Add profile nodes to the globe
+  createNodes(profiles);
+  
+  // Loading complete
+  loading.value = false;
 });
 
 onUnmounted(() => {
-  // Clean up Three.js resources
+  // Remove event listeners
+  window.removeEventListener('resize', onWindowResize);
+  window.removeEventListener('mousemove', onMouseMove);
+  window.removeEventListener('click', onMouseClick);
+  
+  // Dispose of Three.js resources
   if (renderer) {
     renderer.dispose();
   }
@@ -508,34 +476,19 @@ onUnmounted(() => {
     controls.dispose();
   }
   
-  // Remove resize listener
-  window.removeEventListener('resize', handleResize);
-  
-  // Stop animation loop
-  if (typeof cancelAnimationFrame !== 'undefined') {
-    cancelAnimationFrame(animate);
-  }
+  scene = null;
+  camera = null;
+  renderer = null;
+  controls = null;
+  globe = null;
+  nodes = [];
 });
 </script>
 
 <style scoped>
 .global-view {
-  background: radial-gradient(circle at center, #0F172A, #020617);
-  transition: all 0.3s ease;
-}
-
-.profile-preview {
-  transform-origin: bottom;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
 }
 </style>

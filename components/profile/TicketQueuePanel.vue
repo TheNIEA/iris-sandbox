@@ -779,8 +779,8 @@ const emit = defineEmits(['back']);
 // State variables
 const showCodeInput = ref(false);
 const ticketCode = ref('');
-const currentTicketNumber = ref(42);
-const nextTicketNumber = ref(43);
+const currentTicketNumber = ref(null); // Will be fetched from API
+const nextTicketNumber = ref(null); // Will be fetched from API
 const showTicketList = ref(false);
 const showRequestForm = ref(false);
 const showSuccessMessage = ref(false);
@@ -794,64 +794,10 @@ const showCancelForm = ref(false);
 const showStatusUpdateSuccess = ref(false);
 const showCancellationSuccess = ref(false);
 
-// Ticket list data
-const tickets = ref([
-  { 
-    id: '38', 
-    title: 'Need help with Tailwind CSS setup', 
-    status: 'In progress', 
-    date: '2025-05-01',
-    description: 'Having issues configuring Tailwind with the Nuxt project. Styles are not being applied correctly.',
-    priority: 'high',
-    estimatedTime: '1-2 hours',
-    name: 'Alex Johnson',
-    contact: 'alex.j@example.com',
-    expectedDate: '2025-05-10',
-    requiredDeliverables: '- Working Tailwind configuration\n- Documentation on usage with Nuxt\n- Example component with styling',
-    valueRating: 8,
-    attachments: [
-      { name: 'error_screenshot.png' },
-      { name: 'config.js' }
-    ]
-  },
-  { 
-    id: '39', 
-    title: 'Vue component not rendering', 
-    status: 'Pending', 
-    date: '2025-05-02',
-    description: 'The CommunitySidebar component is not rendering properly when navigating from the skills page.',
-    priority: 'medium',
-    estimatedTime: '30 minutes',
-    name: 'Sarah Mills',
-    contact: '@sarahmdev',
-    expectedDate: '2025-05-05',
-    requiredDeliverables: '- Fix for the rendering issue\n- Explanation of what caused it',
-    valueRating: 6,
-    attachments: [
-      { name: 'bug_report.pdf' }
-    ]
-  },
-  { 
-    id: '41', 
-    title: 'Server deployment issue', 
-    status: 'Pending', 
-    date: '2025-05-03',
-    description: 'Deployment to production server is failing due to build errors. Need assistance debugging.',
-    priority: 'high',
-    estimatedTime: '2-3 hours',
-    name: 'Jordan Lee',
-    contact: '555-123-4567',
-    expectedDate: '2025-05-04',
-    requiredDeliverables: '- Successful deployment\n- Documentation of fix\n- Prevention steps for future',
-    valueRating: 9,
-    attachments: [
-      { name: 'error_logs.txt' },
-      { name: 'build_config.json' }
-    ]
-  },
-]);
+// Ticket list data - Empty array that will be populated from API
+const tickets = ref([]);
 
-// New ticket form
+// New ticket form with empty values
 const newTicket = ref({
   title: '',
   description: '',
@@ -871,11 +817,18 @@ const isValidTicket = computed(() => {
          newTicket.value.name.trim() !== '';
 });
 
-// Format the current date
+// Format the current date on component mount
 onMounted(() => {
   const now = new Date();
   const options = { month: 'short', day: 'numeric', year: 'numeric' };
   currentDate.value = now.toLocaleDateString('en-US', options);
+  
+  // Here would be API calls to fetch:
+  // 1. Current ticket number
+  // 2. Next available ticket number
+  // 3. List of open tickets
+  // Example:
+  // fetchTicketData();
 });
 
 // Function to show ticket detail popup
@@ -996,15 +949,9 @@ const ticketGradientStyle = computed(() => {
 const lookupTicket = () => {
   if (ticketCode.value.trim() === '') return;
   
-  // In a real application, this would be an API call
-  const foundTicket = tickets.value.find(ticket => ticket.id === ticketCode.value);
-  
-  if (foundTicket) {
-    // Show the ticket details (simplified for demo)
-    alert(`Found ticket: ${foundTicket.title}`);
-  } else {
-    alert('Ticket not found');
-  }
+  // API call would happen here to search for the ticket
+  // const response = await api.getTicketById(ticketCode.value);
+  // if (response.success) showTicketDetail(response.ticket);
   
   ticketCode.value = '';
   showCodeInput.value = false;
@@ -1014,38 +961,12 @@ const lookupTicket = () => {
 const submitTicket = () => {
   if (!isValidTicket.value) return;
   
-  // Generate a new ticket ID
-  const ticketId = nextTicketNumber.value.toString();
-  
-  // Format attachments for storage
-  let formattedAttachments = [];
-  if (newTicket.value.attachments && newTicket.value.attachments.length > 0) {
-    formattedAttachments = newTicket.value.attachments.map(file => ({
-      name: file.name
-    }));
-  }
-  
-  // Add the ticket to the list
-  tickets.value.push({
-    id: ticketId,
-    title: newTicket.value.title,
-    description: newTicket.value.description,
-    priority: newTicket.value.priority,
-    status: 'Pending',
-    date: currentDate.value,
-    estimatedTime: 'Pending review',
-    name: newTicket.value.name,
-    contact: newTicket.value.contact,
-    expectedDate: newTicket.value.expectedDate,
-    requiredDeliverables: newTicket.value.requiredDeliverables,
-    valueRating: newTicket.value.valueRating,
-    attachments: formattedAttachments
-  });
-  
-  // Update ticket numbers
-  lastSubmittedTicket.value = ticketId;
-  currentTicketNumber.value = nextTicketNumber.value;
-  nextTicketNumber.value++;
+  // API call would happen here to submit the ticket
+  // const response = await api.createTicket(newTicket.value);
+  // if (response.success) {
+  //   lastSubmittedTicket.value = response.ticketId;
+  //   showSuccessMessage.value = true;
+  // }
   
   // Reset form
   newTicket.value = {
@@ -1091,48 +1012,11 @@ const removeStatusFile = (index) => {
 
 // Submit status update
 const submitStatusUpdate = () => {
-  // In a real application, this would be an API call to update the ticket status
-  selectedTicket.value.status = statusUpdateForm.value.status;
-  
-  // Update the ticket in the main list
-  const ticketIndex = tickets.value.findIndex(t => t.id === selectedTicket.value.id);
-  if (ticketIndex !== -1) {
-    tickets.value[ticketIndex] = { ...selectedTicket.value };
-  }
-  
-  // If ticket is marked as complete, save it to localStorage for display in Records tab
-  if (statusUpdateForm.value.status === 'Complete') {
-    // Get existing records or initialize empty array
-    const existingRecords = localStorage.getItem('userRecords') 
-      ? JSON.parse(localStorage.getItem('userRecords')) 
-      : [];
-    
-    // Format the ticket for records display
-    const recordEntry = {
-      type: 'ticket',
-      id: selectedTicket.value.id,
-      title: selectedTicket.value.title,
-      user: selectedTicket.value.name || 'Anonymous',
-      status: 'Completed',
-      date: new Date().toISOString(),
-      completedDate: new Date().toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      }),
-      comment: statusUpdateForm.value.comment || `This ticket has been completed successfully.`,
-      value: calculateTicketValue(selectedTicket.value)
-    };
-    
-    // Add to records
-    existingRecords.push(recordEntry);
-    
-    // Save back to localStorage
-    localStorage.setItem('userRecords', JSON.stringify(existingRecords));
-    
-    // Notify user that the ticket has been added to records
-    console.log('Ticket added to records:', recordEntry);
-  }
+  // API call would happen here to update the ticket status
+  // const response = await api.updateTicketStatus(
+  //   selectedTicket.value.id, 
+  //   statusUpdateForm.value
+  // );
   
   // Reset form
   statusUpdateForm.value = {
@@ -1184,8 +1068,11 @@ const cancellationForm = ref({
 
 // Submit cancellation
 const submitCancellation = () => {
-  // In a real application, this would be an API call to cancel the ticket
-  selectedTicket.value.status = 'Canceled';
+  // API call would happen here to cancel the ticket
+  // const response = await api.cancelTicket(
+  //   selectedTicket.value.id, 
+  //   cancellationForm.value.reason
+  // );
   
   // Reset form
   cancellationForm.value = {

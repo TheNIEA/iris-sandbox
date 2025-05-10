@@ -129,101 +129,206 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { formatNumber, formatCurrency, convertToLetterGrade } from '~/utils/formatter';
+import { ref, computed, onMounted } from 'vue';
+import { formatNumber, convertToLetterGrade } from '~/utils/formatter';
 
+// Props with default empty values instead of hardcoded data
 const props = defineProps({
   initialSkillId: {
     type: String,
-    default: 'vr-ar'
+    default: ''
   }
 });
 
-defineEmits(['back']);
+// Events
+const emit = defineEmits(['back']);
 
-const skills = [
-  {
-    id: 'graphic-design',
-    name: 'Graphic Design',
-    icon: '🎨',
-    category: 'Creative Arts',
-    rating: 3.8,
-    description: 'Visual communication skills that combine images, typography, and colors to convey ideas and messages effectively.',
-    contribution: 21500,
-    marketDemand: 4
-  },
-  {
-    id: '3d-modeling',
-    name: '3D Modeling',
-    icon: '💎',
-    category: 'Digital Creation',
-    rating: 3.5,
-    description: 'Creating three-dimensional digital representations of physical objects or abstract concepts for various applications.',
-    contribution: 19800,
-    marketDemand: 3
-  },
-  {
-    id: 'ai-llms',
-    name: 'AI/LLMs',
-    icon: '🤖',
-    category: 'Technology',
-    rating: 4.5,
-    description: 'Working with artificial intelligence and large language models to develop intelligent systems and applications.',
-    contribution: 38200,
-    marketDemand: 5
-  },
-  {
-    id: 'vr-ar',
-    name: 'VR/AR Development',
-    icon: '🥽',
-    category: 'Immersive Technology',
-    rating: 4.0,
-    description: 'Creating virtual and augmented reality experiences that enhance how we interact with digital content.',
-    contribution: 32500,
-    marketDemand: 4
-  },
-  {
-    id: 'marketing',
-    name: 'Marketing Techniques',
-    icon: '📈',
-    category: 'Business',
-    rating: 3.7,
-    description: 'Strategies for promoting products, services, or ideas to target audiences through various channels.',
-    contribution: 24600,
-    marketDemand: 4
-  },
-  {
-    id: 'finance',
-    name: 'Financial Analysis',
-    icon: '💹',
-    category: 'Economics',
-    rating: 3.9,
-    description: 'Evaluating businesses, projects, budgets, and other finance-related entities for profitability and stability.',
-    contribution: 28900,
-    marketDemand: 3
+// State variables
+const currentSkillId = ref(props.initialSkillId || '');
+const skillRatings = ref({}); // Will store user ratings for skills
+const expanded = ref(false);
+const assessmentMode = ref(false);
+const showAssessmentSuccessModal = ref(false);
+const pendingAssessmentId = ref(null);
+
+// Empty data structures that will be populated via API calls
+const skills = ref([]); // Will be populated with skills from API
+const assessments = ref([]); // Will be populated with assessments from API
+
+// Selected skill details
+const selectedSkill = computed(() => {
+  return skills.value.find(skill => skill.id === currentSkillId.value) || null;
+});
+
+// Get average rating for current skill
+const averageRating = computed(() => {
+  if (!selectedSkill.value) return 0;
+  
+  // Calculate average or return default if no assessments
+  const relevantAssessments = assessments.value.filter(a => a.skillId === currentSkillId.value);
+  if (relevantAssessments.length === 0) return 0;
+  
+  const sum = relevantAssessments.reduce((acc, curr) => acc + curr.rating, 0);
+  return sum / relevantAssessments.length;
+});
+
+// Get letter grade for current skill
+const letterGrade = computed(() => {
+  return convertToLetterGrade(averageRating.value);
+});
+
+// Format ratings for display
+const formattedRatings = computed(() => {
+  if (!selectedSkill.value) return { learn: 0, apply: 0, master: 0, total: 0 };
+  
+  // Calculate or provide default values if no assessments
+  const relevantAssessments = assessments.value.filter(a => a.skillId === currentSkillId.value);
+  if (relevantAssessments.length === 0) {
+    return { learn: 0, apply: 0, master: 0, total: 0 };
   }
-];
+  
+  // Calculate average for each category
+  const learn = relevantAssessments.reduce((acc, curr) => acc + curr.learnValue, 0) / relevantAssessments.length;
+  const apply = relevantAssessments.reduce((acc, curr) => acc + curr.applyValue, 0) / relevantAssessments.length;
+  const master = relevantAssessments.reduce((acc, curr) => acc + curr.masterValue, 0) / relevantAssessments.length;
+  const total = learn + apply + master;
+  
+  return { learn, apply, master, total };
+});
 
-const selectedSkill = ref(skills.find(skill => skill.id === props.initialSkillId) || skills[3]);
-
-const selectSkill = (skill) => {
-  selectedSkill.value = skill;
+// Fetch skills from API
+const fetchSkills = async () => {
+  try {
+    // In a real implementation, this would be an API call
+    // const response = await fetch('/api/skills');
+    // skills.value = await response.json();
+    
+    // For testing, we'll leave this empty for now
+    skills.value = [];
+  } catch (error) {
+    console.error('Failed to fetch skills:', error);
+  }
 };
 
-const nextSkill = () => {
-  const currentIndex = skills.findIndex(skill => skill.id === selectedSkill.value.id);
-  const nextIndex = (currentIndex + 1) % skills.length;
-  selectedSkill.value = skills[nextIndex];
+// Fetch assessments for current skill
+const fetchAssessments = async () => {
+  try {
+    // In a real implementation, this would be an API call
+    // const response = await fetch(`/api/skills/${currentSkillId.value}/assessments`);
+    // assessments.value = await response.json();
+    
+    // For testing, we'll leave this empty for now
+    assessments.value = [];
+  } catch (error) {
+    console.error('Failed to fetch assessments:', error);
+  }
 };
 
-const calculateCircumference = (radius) => {
-  return 2 * Math.PI * radius;
+// Toggle expanded view
+const toggleExpanded = () => {
+  expanded.value = !expanded.value;
 };
 
-const calculateDashOffset = (radius, percentage) => {
-  const circumference = calculateCircumference(radius);
-  return circumference * (1 - percentage);
+// Navigate to a different skill
+const navigateToSkill = (skillId) => {
+  currentSkillId.value = skillId;
+  expanded.value = false;
+  
+  // In a real implementation, we'd fetch new data for the selected skill
+  fetchAssessments();
 };
+
+// Start assessment for current skill
+const startAssessment = () => {
+  assessmentMode.value = true;
+  
+  // Initialize ratings for the current skill
+  skillRatings.value = {
+    learn: 3,
+    apply: 3, 
+    master: 3,
+    importance: 5,
+    comment: ''
+  };
+};
+
+// Cancel assessment
+const cancelAssessment = () => {
+  assessmentMode.value = false;
+};
+
+// Submit assessment
+const submitAssessment = async () => {
+  try {
+    // In a real implementation, this would be an API call
+    // const response = await fetch('/api/skills/assess', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     skillId: currentSkillId.value,
+    //     ...skillRatings.value
+    //   }),
+    // });
+    
+    // const result = await response.json();
+    // if (result.success) {
+    //   pendingAssessmentId.value = result.assessmentId;
+    //   showAssessmentSuccessModal.value = true;
+    // }
+    
+    // For testing, we'll simulate success
+    pendingAssessmentId.value = 'test-assessment-id';
+    showAssessmentSuccessModal.value = true;
+  } catch (error) {
+    console.error('Failed to submit assessment:', error);
+  }
+  
+  // Reset assessment mode
+  assessmentMode.value = false;
+};
+
+// Calculate total assessment value
+const calculateTotalValue = computed(() => {
+  if (!skillRatings.value) return 0;
+  return (
+    skillRatings.value.learn + 
+    skillRatings.value.apply + 
+    skillRatings.value.master
+  );
+});
+
+// Calculate impact value
+const calculateImpact = computed(() => {
+  return calculateTotalValue.value * (skillRatings.value?.importance / 10 || 0.5);
+});
+
+// Go back to previous view
+const goBack = () => {
+  emit('back');
+};
+
+// Close success modal
+const closeSuccessModal = () => {
+  showAssessmentSuccessModal.value = false;
+  pendingAssessmentId.value = null;
+  
+  // Refresh assessments
+  fetchAssessments();
+};
+
+// Check if there are any existing assessments
+const hasAssessments = computed(() => {
+  return assessments.value.length > 0;
+});
+
+// Initialize component
+onMounted(() => {
+  // Fetch necessary data
+  fetchSkills();
+  fetchAssessments();
+});
 </script>
 
 <style scoped>

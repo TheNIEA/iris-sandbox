@@ -43,9 +43,8 @@
         <UserProfilePanel 
           v-if="currentView === 'profile'"
           userName="Khoury Howell"
-          :wealthAmount="577900"
-          :rating="4.0"
-          profileImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          :wealthAmount="0"
+          profileImage="https://s3.us-east-2.amazonaws.com/theniea.com/khouryhowell_pfp.jpeg"
           @show-skills="showSkillsView"
         />
         <SkillsAssessmentPanel 

@@ -27,7 +27,7 @@
         <div v-if="activeTab === 'dashboard'" class="absolute top-3 left-3 z-20 flex items-center space-x-2">
           <button 
             @click="toggleGlobalView()"
-            class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
+            class="hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
             :title="globalViewActive ? 'Switch to Static View' : 'Switch to Globe View'"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-colors duration-300" 
@@ -39,7 +39,7 @@
           
           <button 
             @click="shareProfile"
-            class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
+            class="hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/70 transition-colors duration-300"
             title="Share Profile"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 hover:text-white transition-colors duration-300" viewBox="0 0 20 20" fill="currentColor">
@@ -52,8 +52,10 @@
         <ProfileHeader 
           :userName="props.userName" 
           :profileImage="props.profileImage" 
-          :userRole="'Knowledge Contributor'"
-          :rating="props.rating || 4.2"
+          :userRole="'Social Economics'"
+          :userContributions="userContributions"
+          :globalContributions="globalContributions"
+          :contributionPercentage="contributionPercentage"
         />
         
         <!-- Envalumental Display Component -->
@@ -62,10 +64,13 @@
           @show-info="showEnvalumentInfo = true"
         />
 
-        <!-- Draggable Profile Tab Component -->
+        <!-- Draggable Profile Tab Component (Hidden but still functional) -->
         <DraggableProfileTab
           v-if="activeTab === 'dashboard'"
-          @navigate-to-signup="router.push('/signup')"
+          class="hidden" 
+          :userName="props.userName"
+          :profileImage="props.profileImage"
+          @tab-action="navigateToSignup"
         />
 
         <!-- Envalument Info Popup -->
@@ -122,31 +127,7 @@
         <div class="mt-6">
           <!-- Home Tab Content -->
           <div v-if="activeTab === 'dashboard'" class="px-2 py-4">
-            <!-- Tutorial for global view - only shown after first activation -->
-            <div 
-              v-if="showGlobalViewTutorial" 
-              class="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4 mb-6 relative"
-            >
-              <button 
-                @click="showGlobalViewTutorial = false"
-                class="absolute top-2 right-2 text-blue-400 hover:text-white"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </button>
-              
-              <h4 class="text-blue-300 font-medium mb-2">Interactive Globe View</h4>
-              <p class="text-sm text-gray-300">
-                Explore the NIEA community through an interactive 3D globe. Each node represents a profile with different skills and contributions.
-              </p>
-              <ul class="text-sm text-gray-300 mt-2 space-y-1 ml-5 list-disc">
-                <li>Use your mouse wheel or pinch gestures to zoom in/out</li>
-                <li>Drag to rotate the globe and explore different profiles</li>
-                <li>Click on a node to view profile details</li>
-                <li>When zoomed in enough, you can view full profiles</li>
-              </ul>
-            </div>
+            <!-- Tutorial message is removed from here -->
           </div>
           
           <!-- Documentation Tab Panel (Records Tab) -->
@@ -155,71 +136,30 @@
             
             <div v-if="combinedRecords.length > 0" class="space-y-4">
               <!-- Show first two items only initially -->
-              <div v-for="(record, index) in showAllRecords ? combinedRecords : combinedRecords.slice(0, 2)" :key="index" 
-                class="bg-gray-900/40 p-4 rounded-lg border border-blue-800/50 backdrop-blur-sm"
-                :class="{'border-l-4': record.type === 'ticket', 'border-l-blue-500': record.type === 'ticket'}"
-              >
-                <!-- Record Type Badge -->
-                <div class="flex justify-between items-start mb-2">
-                  <div>
-                    <div class="flex items-center">
-                      <h4 class="font-medium text-white">{{ record.title || record.skill }}</h4>
-                      <span v-if="record.type === 'ticket'" class="ml-2 text-xs px-2 py-0.5 bg-blue-500/30 rounded-full text-blue-300">Service</span>
-                      <span v-else class="ml-2 text-xs px-2 py-0.5 bg-purple-500/30 rounded-full text-purple-300">Assessment</span>
-                    </div>
-                    <p class="text-sm text-blue-300">by {{ record.user }}</p>
-                  </div>
-                  <div class="bg-blue-800/50 px-2 py-1 rounded text-sm font-medium text-blue-300">
-                    {{ record.type === 'ticket' ? record.status : `${record.rating}/5` }}
-                  </div>
-                </div>
+              <template v-for="(record, index) in showAllRecords ? combinedRecords : combinedRecords.slice(0, 2)" :key="index">
+                <!-- Use the appropriate record component based on record type -->
+                <AssessmentRecord 
+                  v-if="record.type === 'assessment'"
+                  :skill="record.skill"
+                  :user="record.user"
+                  :rating="record.rating"
+                  :values="record.values"
+                  :comment="record.comment"
+                  :date="record.date"
+                />
                 
-                <!-- Assessment Specific Content -->
-                <div v-if="record.type === 'assessment'" class="mb-2">
-                  <div class="text-sm text-gray-400 mb-1">Value Assessment</div>
-                  <div class="flex space-x-3 text-sm">
-                    <div>
-                      <span class="text-gray-500">Learn:</span>
-                      <span class="text-white">${{ record.values.learn }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500">Experience:</span>
-                      <span class="text-white">${{ record.values.apply }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500">Master:</span>
-                      <span class="text-white">${{ record.values.master }}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Ticket Specific Content -->
-                <div v-if="record.type === 'ticket'" class="mb-2">
-                  <div class="text-sm text-gray-400 mb-1">Ticket Details</div>
-                  <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
-                    <div>
-                      <span class="text-gray-500">ID:</span>
-                      <span class="text-white">#{{ record.id }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500">Completed:</span>
-                      <span class="text-white">{{ record.completedDate }}</span>
-                    </div>
-                    <div v-if="record.value">
-                      <span class="text-gray-500">Value Added:</span>
-                      <span class="text-white">+${{ record.value }}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Common Fields -->
-                <p class="text-gray-300 text-sm mt-2 italic">
-                  "{{ record.comment }}"
-                </p>
-                <div class="text-xs text-gray-400 mt-2">
-                  {{ record.date }}
-                </div>
-              </div>
+                <ServiceRecord 
+                  v-else-if="record.type === 'ticket'"
+                  :id="record.id"
+                  :title="record.title"
+                  :user="record.user"
+                  :status="record.status"
+                  :completedDate="record.completedDate"
+                  :value="record.value"
+                  :comment="record.comment"
+                  :date="record.date"
+                />
+              </template>
               
               <!-- View All toggle button -->
               <div v-if="combinedRecords.length > 2" class="text-center">
@@ -245,7 +185,7 @@
             <div v-else class="text-center py-8">
               <div class="w-16 h-16 mx-auto bg-blue-900/20 rounded-full flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <p class="text-gray-400">No records available yet</p>
@@ -471,6 +411,9 @@ import ValueBreakdown from './ValueBreakdown.vue';
 import html2canvas from 'html2canvas';
 import ProfileCard from '../ui/ProfileCard.vue';
 import { formatNumber, formatCurrency, formatDate, convertToLetterGrade } from '~/utils/formatter';
+import AssessmentRecord from '../ui/records/AssessmentRecord.vue';
+import ServiceRecord from '../ui/records/ServiceRecord.vue';
+import { getCombinedRecords, clearAllRecords } from '~/utils/recordManager';
 
 const props = defineProps({
   userName: {
@@ -497,6 +440,20 @@ defineEmits(['show-skills']);
 const globalViewActive = ref(false);
 const showGlobalViewTutorial = ref(false);
 const hasSeenGlobalView = ref(false);
+
+// Contribution data for the new contribution scale
+const userContributions = ref(0);
+const globalContributions = ref(200); 
+const contributionPercentage = computed(() => {
+  // Calculate percentage position on the slider (0-100%)
+  // Higher percentage means more contributions relative to global total
+  if (globalContributions.value === 0) return 0;
+  
+  // Calculate where this user stands compared to global total
+  // For example, if user has 75 out of 150 total contributions, they're at 50%
+  // If they have the most contributions (e.g. 78 out of 150), they should be close to 100%
+  return Math.min(Math.round((userContributions.value / globalContributions.value) * 100), 100);
+});
 
 // Toggle function for global view
 function toggleGlobalView(forceState) {
@@ -544,57 +501,8 @@ const knowledgeSharingValue = 153400;
 const communityParticipationValue = 85000;
 const verificationValue = 50000;
 
-// Sample assessment data for the documentation tab
-const assessmentList = [
-  {
-    skill: 'Graphic Design',
-    user: 'Maya Johnson',
-    rating: 4.2,
-    values: {
-      learn: 25,
-      apply: 60,
-      master: 120
-    },
-    comment: 'Essential for visual communication in today\'s digital landscape. I use this daily for my marketing projects.',
-    date: 'April 28, 2025'
-  },
-  {
-    skill: '3D Modeling',
-    user: 'Alex Chen',
-    rating: 3.8,
-    values: {
-      learn: 35,
-      apply: 80,
-      master: 150
-    },
-    comment: 'Crucial for product visualization and VR/AR applications. Takes time to master but worth the investment.',
-    date: 'April 25, 2025'
-  },
-  {
-    skill: 'AI/LLMs',
-    user: 'Sarah Williams',
-    rating: 4.7,
-    values: {
-      learn: 45,
-      apply: 100,
-      master: 200
-    },
-    comment: 'The future of productivity. Learning this has dramatically improved my workflow and problem-solving abilities.',
-    date: 'April 22, 2025'
-  },
-  {
-    skill: 'VR/AR Development',
-    user: 'Khoury Howell',
-    rating: 4.0,
-    values: {
-      learn: 40,
-      apply: 90,
-      master: 180
-    },
-    comment: 'Critical for creating immersive experiences. I believe this will transform education and training in the next decade.',
-    date: 'April 20, 2025'
-  }
-];
+// Remove all sample assessment data
+const assessmentList = [];
 
 // Skills functionality
 const assessSkill = (skill) => {
@@ -694,6 +602,9 @@ const calculateMaxDrag = () => {
 onMounted(() => {
   calculateMaxDrag();
   window.addEventListener('resize', calculateMaxDrag);
+  
+  // Clear all existing records from localStorage
+  clearAllRecords();
 });
 
 // Define these functions here so they can be removed in onUnmounted/onMouseUp
@@ -750,20 +661,8 @@ const combinedRecords = computed(() => {
     };
   });
   
-  // Combine with sample data for samples only if no stored records exist
-  // Or append them regardless for demo purposes
-  return [
-    ...formattedStoredRecords,
-    // Only include sample data if we don't have many real records
-    // Or append them regardless for demo purposes
-    ...(formattedStoredRecords.length < 3 ? [
-      ...assessmentList.map(assessment => ({ ...assessment, type: 'assessment' })),
-      // Filter out sample completed tickets that might duplicate stored ones
-      ...completedTickets
-        .filter(ticket => !formattedStoredRecords.some(r => r.type === 'ticket' && r.id === ticket.id))
-        .map(ticket => ({ ...ticket, type: 'ticket' }))
-    ] : [])
-  ].sort((a, b) => {
+  // Return only real records from localStorage, no sample data
+  return formattedStoredRecords.sort((a, b) => {
     // Sort by date, newest first (handle both string and Date objects)
     const dateA = a.date instanceof Date ? a.date : new Date(a.date);
     const dateB = b.date instanceof Date ? b.date : new Date(b.date);
@@ -774,39 +673,8 @@ const combinedRecords = computed(() => {
 // State for showing all records or just the first two
 const showAllRecords = ref(false);
 
-// Sample completed tickets data
-const completedTickets = [
-  {
-    id: 101,
-    title: 'Website Redesign',
-    user: 'John Doe',
-    status: 'Completed',
-    date: 'April 30, 2025',
-    completedDate: 'April 30, 2025',
-    comment: 'The redesign has dramatically improved user engagement metrics.',
-    value: '2500'
-  },
-  {
-    id: 102,
-    title: 'UI Animation Implementation',
-    user: 'Emma Wilson',
-    status: 'Completed',
-    date: 'April 26, 2025',
-    completedDate: 'April 26, 2025',
-    comment: 'Smooth animations that enhance the user experience without being distracting.',
-    value: '1800'
-  },
-  {
-    id: 103,
-    title: 'Database Optimization',
-    user: 'Marcus Chen',
-    status: 'Completed',
-    date: 'April 23, 5',
-    completedDate: 'April 23, 2025',
-    comment: 'Query time reduced by 70%. Much better performance overall.',
-    value: '3200'
-  }
-];
+// Remove all sample completed tickets data
+const completedTickets = [];
 
 // Share Profile state
 const showShareDialog = ref(false);
@@ -889,4 +757,10 @@ const events = ref([
   { title: 'Developer Hackathon', date: 'This month' },
   { title: 'Industry Networking Event', date: 'Coming soon' }
 ]);
+
+// Function to navigate to signup page when tab is dragged
+const navigateToSignup = () => {
+  console.log('Navigating to signup page');
+  router.push('/signup');
+};
 </script>

@@ -5,7 +5,7 @@
       <!-- Animated background elements that flow freely -->
       <div class="absolute inset-0 overflow-hidden">
         <!-- Subtle glowing particles -->
-        <div v-for="i in 12" :key="i" class="absolute rounded-full opacity-50"
+        <div v-for="i in 12" :key="i" class="absolute rounded-full opacity-50 hidden"
           :style="{
             width: `${2 + Math.random() * 4}px`,
             height: `${2 + Math.random() * 4}px`,
@@ -19,7 +19,7 @@
         ></div>
         
         <!-- Star decoration in the flowing background -->
-        <div class="stars-container absolute inset-0 pointer-events-none">
+        <div class="stars-container absolute inset-0 pointer-events-none hidden">
           <div v-for="i in 8" :key="i" class="absolute star opacity-70"
             :style="{
               top: `${Math.random() * 100}%`,
@@ -41,10 +41,9 @@
           <div class="flex flex-col items-center justify-center">
             <h3 class="text-gray-300 mb-1">Envalumental Wealth</h3>
             <div class="flex justify-center items-baseline">
-              <span class="text-xl text-blue-400 font-medium mr-1">$</span>
-              <div class="wealth-value-container relative overflow-hidden">
+              <div class="wealth-value-container relative overflow-hidden text-center" style="min-width: 9.5rem;">
                 <div ref="wealthValueRef" class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 tabular-nums">
-                  {{ formattedWealthDisplay }}
+                  <span class="text-xl text-blue-400 font-medium">$</span>{{ formattedWealthDisplay }}
                 </div>
               </div>
             </div>
@@ -75,7 +74,7 @@
       </div>
       
       <!-- Animated particles in the background -->
-      <div v-for="i in 6" :key="`particle-${i}`" class="absolute rounded-full"
+      <div v-for="i in 6" :key="`particle-${i}`" class="absolute rounded-full hidden"
         :style="{
           width: `${4 + Math.random() * 6}px`,
           height: `${4 + Math.random() * 6}px`,

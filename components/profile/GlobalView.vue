@@ -1,13 +1,40 @@
 <template>
-  <div class="global-view h-full w-full">
-    <!-- Main canvas container for the globe visualization -->
-    <div ref="canvasContainer" class="relative h-full w-full">
+  <!-- Changed from a normal div to a fixed position div that takes up the entire viewport -->
+  <div class="global-view fixed inset-0 w-screen h-screen">
+    <!-- Main canvas container now explicitly set to fill viewport -->
+    <div ref="canvasContainer" class="absolute inset-0 w-full h-full">
       <!-- Navigation Back Button (fixed position) -->
       <button @click="$emit('back')" class="absolute top-5 left-5 z-10 p-2 bg-gray-900/70 hover:bg-gray-800/80 rounded-full transition-all">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
       </button>
+      
+      <!-- Tutorial for globe view that shows after loading -->
+      <div 
+        v-if="showTutorial" 
+        class="absolute top-16 left-1/2 transform -translate-x-1/2 max-w-md w-11/12 bg-blue-900/30 border border-blue-500/30 rounded-lg p-4 mb-6 z-30"
+      >
+        <button 
+          @click="showTutorial = false"
+          class="absolute top-2 right-2 text-blue-400 hover:text-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        
+        <h4 class="text-blue-300 font-medium mb-2">Interactive Globe View</h4>
+        <p class="text-sm text-gray-300">
+          Explore the NIEA community through an interactive 3D globe. Each node represents a profile with different skills and contributions.
+        </p>
+        <ul class="text-sm text-gray-300 mt-2 space-y-1 ml-5 list-disc">
+          <li>Use your mouse wheel or pinch gestures to zoom in/out</li>
+          <li>Drag to rotate the globe and explore different profiles</li>
+          <li>Click on a node to view profile details</li>
+          <li>When zoomed in enough, you can view full profiles</li>
+        </ul>
+      </div>
       
       <!-- Loading state while globe initializes -->
       <div v-if="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/80 z-20">
@@ -159,6 +186,7 @@ const canvasContainer = ref(null);
 const globeCanvas = ref(null);
 const loading = ref(true);
 const selectedProfile = ref(null);
+const showTutorial = ref(false); // Added state for tutorial visibility
 
 // Three.js variables
 let scene, camera, renderer, controls;
@@ -190,8 +218,9 @@ const initScene = () => {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x050A1F); // Dark blue background
   
-  const width = canvasContainer.value.clientWidth;
-  const height = canvasContainer.value.clientHeight;
+  // Use window dimensions instead of container dimensions
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   
   camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
   camera.position.z = 10;
@@ -203,6 +232,13 @@ const initScene = () => {
   });
   renderer.setSize(width, height);
   renderer.setPixelRatio(window.devicePixelRatio);
+  
+  // Initialize orbit controls
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 6;
+  controls.maxDistance = 15;
   
   // Add ambient light
   const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
@@ -280,14 +316,99 @@ const createGlobe = () => {
   const glow = new THREE.Mesh(glowGeometry, glowMaterial);
   scene.add(glow);
   
-  // Create profile nodes
-  createProfileNodes();
-  
-  // Add a raycaster for interaction
-  setupInteraction();
+  // Add mock profile nodes since we don't have real data
+  createMockProfileNodes();
   
   const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
   scene.add(glowMesh);
+};
+
+// Create mock profile data and nodes
+const createMockProfileNodes = () => {
+  // Create mock profile data
+  const mockProfiles = [
+    {
+      id: '1',
+      name: 'Maya Johnson',
+      image: 'https://randomuser.me/api/portraits/women/44.jpg',
+      role: 'UX Designer',
+      connections: 128,
+      location: 'San Francisco, CA',
+      primarySkillCategory: 'design',
+      contribution: 35000,
+      skills: [
+        { name: 'UI Design', category: 'design' },
+        { name: 'Wireframing', category: 'design' },
+        { name: 'Prototyping', category: 'design' }
+      ]
+    },
+    {
+      id: '2',
+      name: 'Alex Chen',
+      image: 'https://randomuser.me/api/portraits/men/32.jpg',
+      role: 'Full Stack Developer',
+      connections: 95,
+      location: 'Austin, TX',
+      primarySkillCategory: 'technology',
+      contribution: 42000,
+      skills: [
+        { name: 'React', category: 'technology' },
+        { name: 'Node.js', category: 'technology' },
+        { name: 'MongoDB', category: 'technology' }
+      ]
+    },
+    {
+      id: '3',
+      name: 'Khoury Howell',
+      image: 'https://s3.us-east-2.amazonaws.com/theniea.com/khouryhowell_pfp.jpeg',
+      role: 'Social Economics',
+      connections: 132,
+      location: 'Detroit, MI',
+      primarySkillCategory: 'business',
+      contribution: 38000,
+      skills: [
+        { name: 'VR/AR', category: 'technology' },
+        { name: 'AI/LLMs', category: 'technology' },
+        { name: '3D Modeling', category: 'design' }
+      ]
+    },
+    {
+      id: '4',
+      name: 'Sarah Williams',
+      image: 'https://randomuser.me/api/portraits/women/68.jpg',
+      role: 'Data Scientist',
+      connections: 76,
+      location: 'Boston, MA',
+      primarySkillCategory: 'technology',
+      contribution: 51000,
+      skills: [
+        { name: 'Machine Learning', category: 'technology' },
+        { name: 'Python', category: 'technology' },
+        { name: 'Data Visualization', category: 'technology' }
+      ]
+    },
+    {
+      id: '5',
+      name: 'Marcus Lee',
+      image: 'https://randomuser.me/api/portraits/men/45.jpg',
+      role: 'Product Manager',
+      connections: 112,
+      location: 'New York, NY',
+      primarySkillCategory: 'business',
+      contribution: 47000,
+      skills: [
+        { name: 'Strategy', category: 'business' },
+        { name: 'Market Research', category: 'business' },
+        { name: 'Agile', category: 'business' }
+      ]
+    }
+  ];
+  
+  // Add mock profiles to our data store
+  profilesData.value = mockProfiles;
+  
+  // Create nodes for mock profiles
+  createNodes(mockProfiles);
 };
 
 // Position nodes on the globe based on real data
@@ -337,7 +458,14 @@ const createNodes = (profiles) => {
     
     // Position node
     node.position.set(x, y, z);
-    node.userData = { profileId: profile.id }; // Store reference to profile
+    node.userData = { 
+      profileId: profile.id,
+      animation: {
+        pulseScale: Math.random() * 0.5 + 0.5, // Random pulse intensity
+        pulseSpeed: Math.random() * 0.5 + 0.8, // Random pulse speed
+        time: Math.random() * Math.PI * 2 // Random starting phase
+      }
+    }; // Store reference to profile and animation parameters
     
     // Add the node to the scene
     scene.add(node);
@@ -345,12 +473,10 @@ const createNodes = (profiles) => {
   });
 };
 
-// Handle window resize
+// Handle window resize - Updated to use window dimensions
 const onWindowResize = () => {
-  if (!canvasContainer.value) return;
-  
-  const width = canvasContainer.value.clientWidth;
-  const height = canvasContainer.value.clientHeight;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
@@ -405,8 +531,8 @@ const animate = () => {
   }
   
   // Animate profile nodes
-  profileNodes.forEach(node => {
-    if (node.userData.animation) {
+  nodes.forEach(node => {
+    if (node.userData && node.userData.animation) {
       const { pulseScale, pulseSpeed, time } = node.userData.animation;
       
       // Update time
@@ -448,20 +574,29 @@ const viewProfile = (profileId) => {
 
 // Initialize component
 onMounted(async () => {
-  // Fetch profile data
-  const profiles = await fetchProfiles();
-  
-  // Initialize the 3D scene
-  initScene();
-  
-  // Add profile nodes to the globe
-  createNodes(profiles);
-  
-  // Loading complete
-  loading.value = false;
+  try {
+    // Force an immediate resize to take full viewport
+    document.body.style.overflow = 'hidden'; // Prevent scrollbars
+    
+    // Initialize the 3D scene
+    initScene();
+    
+    // Loading complete (moved inside try/catch to ensure it's set even if there's an error)
+    setTimeout(() => {
+      loading.value = false;
+      // Show tutorial after loading is complete
+      showTutorial.value = true;
+    }, 800);
+  } catch (error) {
+    console.error("Error initializing GlobalView:", error);
+    loading.value = false; // Ensure loading is set to false even if there's an error
+  }
 });
 
 onUnmounted(() => {
+  // Restore normal scrolling
+  document.body.style.overflow = '';
+  
   // Remove event listeners
   window.removeEventListener('resize', onWindowResize);
   window.removeEventListener('mousemove', onMouseMove);
@@ -487,8 +622,9 @@ onUnmounted(() => {
 
 <style scoped>
 .global-view {
-  position: relative;
+  position: fixed; /* Changed from relative to fixed */
   overflow: hidden;
   background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  z-index: 50; /* Ensure it appears above other content */
 }
 </style>

@@ -16,18 +16,21 @@
       <!-- User info -->
       <div class="ml-4">
         <h2 class="text-2xl font-bold text-white">{{ userName }}</h2>
-        <div class="flex items-center mt-1">
-          <!-- Star rating display -->
-          <div class="flex">
-            <div v-for="i in 5" :key="i" class="text-lg">
-              <span v-if="i <= Math.floor(rating)" class="text-yellow-400">★</span>
-              <span v-else-if="i - rating < 1 && i - rating > 0" class="text-yellow-400">★</span>
-              <span v-else class="text-gray-600">★</span>
+        <div class="flex flex-col mt-1">
+          <!-- Contribution scale slider -->
+          <div class="flex items-center">
+            <div class="w-32 h-2 bg-gray-700 rounded-full mr-2 relative">
+              <!-- The filled portion of the slider based on contribution percentage -->
+              <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full"
+                  :style="{ width: `${contributionPercentage}%` }"></div>
+              <!-- The indicator dot that moves along the slider -->
+              <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md transform -translate-x-1/2"
+                  :style="{ left: `${contributionPercentage}%` }"></div>
             </div>
+            <span class="text-gray-400 text-sm">{{ userContributions }} contributions</span>
           </div>
-          <span class="ml-2 text-gray-400 text-sm">{{ rating.toFixed(1) }}</span>
+          <p class="text-blue-400 text-sm mt-1">{{ userRole }}</p>
         </div>
-        <p class="text-blue-400 text-sm mt-1">{{ userRole }}</p>
       </div>
     </div>
   </div>
@@ -39,9 +42,17 @@ defineProps({
     type: String,
     required: true
   },
-  rating: {
+  userContributions: {
     type: Number,
-    required: true
+    default: 0
+  },
+  globalContributions: {
+    type: Number,
+    default: 100
+  },
+  contributionPercentage: {
+    type: Number,
+    default: 50 // Default to middle of scale (50%)
   },
   profileImage: {
     type: String,

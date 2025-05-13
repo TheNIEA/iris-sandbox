@@ -6,29 +6,24 @@
         @click="toggleSkillsAccordion" 
         class="flex items-center px-4 py-2 bg-blue-700/20 hover:bg-blue-600/30 rounded-lg text-white transition-colors border border-blue-500/30 backdrop-blur-sm mx-auto"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
+        <CheckIcon class="h-5 w-5 mr-2" />
         My Skills
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform" 
+        <ChevronDownIcon 
+          class="h-5 w-5 ml-2 transition-transform" 
           :class="{'transform rotate-180': showSkillsAccordion}"
-          viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
-        </svg>
+        />
       </button>
     </div>
     
     <!-- Skills List Accordion -->
     <div v-if="showSkillsAccordion" class="animate-slideDown space-y-3">
-      <!-- Add New Skill Button -->
-      <div class="flex justify-center mb-3">
+      <!-- Add New Skill Button (Hidden but still functional) -->
+      <div class="hidden">
         <button 
           @click="addNewSkill" 
           class="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600/30 to-purple-600/30 hover:from-blue-600/40 hover:to-purple-600/40 rounded-lg text-white transition-colors border border-blue-500/30 backdrop-blur-sm"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
+          <PlusIcon class="h-5 w-5 mr-2" />
           Add New Skill
         </button>
       </div>
@@ -75,11 +70,10 @@
                 ? 'text-blue-300' 
                 : 'text-purple-300'"
             >{{ skill.rating.toFixed(1) }}</div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 transition-transform" 
+            <ChevronDownIcon 
+              class="h-4 w-4 text-gray-400 transition-transform" 
               :class="{'transform rotate-180': expandedSkill === skill.id}" 
-              viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
-            </svg>
+            />
           </div>
         </div>
         
@@ -141,9 +135,7 @@
                   ? 'bg-blue-700/40 hover:bg-blue-600/50 border-blue-500/30' 
                   : 'bg-purple-700/40 hover:bg-purple-600/50 border-purple-500/30'"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
+                <PlusIcon class="h-4 w-4 mr-1" />
                 Rate Skill
               </button>
             </div>
@@ -157,6 +149,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { formatNumber } from '~/utils/formatter';
+import { 
+  ChevronDownIcon, 
+  CheckIcon, 
+  PlusIcon 
+} from '~/components/ui/icons';
 
 const props = defineProps({
   skills: {

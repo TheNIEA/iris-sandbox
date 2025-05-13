@@ -5,9 +5,8 @@
       <UserProfilePanel 
         ref="profilePanelRef"
         userName="Khoury Howell"
-        :wealthAmount="577900"
-        :rating="4.0"
-        profileImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+        :wealthAmount="0"
+        profileImage="https://s3.us-east-2.amazonaws.com/theniea.com/khouryhowell_pfp.jpeg"
         @show-skills="showSkillsPanel"
       />
     </div>
@@ -15,7 +14,7 @@
     <!-- Draggable Tab (Positioned fixed on the screen) -->
     <div
       ref="dragContainer"
-      class="fixed top-1/4 right-2 transform -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing"
+      class="fixed top-1/4 right-2 transform -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing hidden"
       :class="{ 'transition-transform duration-300 ease-out': !isDragging }"
       :style="{ transform: `translateX(${dragPosition}px)` }"
       @mousedown="startDrag"
@@ -26,7 +25,7 @@
         <!-- Profile Icon -->
         <div class="h-10 w-10 rounded-full border-2 border-white overflow-hidden mr-3">
           <img 
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+            src="https://s3.us-east-2.amazonaws.com/theniea.com/khouryhowell_pfp.jpeg" 
             alt="User Profile" 
             class="h-full w-full object-cover"
           />

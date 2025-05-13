@@ -1,32 +1,42 @@
 <template>
-  <div
-    ref="dragContainer"
-    class="fixed top-1/4 right-2 transform -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing"
-    :class="{ 'transition-transform duration-300 ease-out': !isDragging }"
-    :style="{ transform: `translateX(${dragPosition}px)` }"
-    @mousedown="startDrag"
-    @touchstart.prevent="startDrag"
-  >
-    <!-- The Rounded Rectangle Tab -->
-    <div class="flex items-center h-16 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-l-xl shadow-lg pl-3 pr-4">
-      <!-- Grip area / Icon -->
-      <div class="flex items-center justify-center h-full w-8 mr-1 text-white/70 flex-shrink-0">
-         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-         </svg>
+  <div>
+    <!-- Darkening overlay that gets darker as tab is dragged -->
+    <div 
+      v-if="isDragging || dragPosition < 0" 
+      class="fixed inset-0 bg-black transition-opacity z-20"
+      :style="{ opacity: darkOverlayOpacity }"
+      @click="resetPosition"
+    ></div>
+  
+    <div
+      ref="dragContainer"
+      class="fixed top-1/4 right-2 transform -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing"
+      :class="{ 'transition-transform duration-300 ease-out': !isDragging }"
+      :style="{ transform: `translateX(${dragPosition}px)` }"
+      @mousedown="startDrag"
+      @touchstart.prevent="startDrag"
+    >
+      <!-- The Rounded Rectangle Tab -->
+      <div class="flex items-center h-16 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-l-xl shadow-lg pl-3 pr-4">
+        <!-- Grip area / Icon -->
+        <div class="flex items-center justify-center h-full w-8 mr-1 text-white/70 flex-shrink-0">
+           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+           </svg>
+        </div>
+        <!-- Profile Icon -->
+        <div class="h-10 w-10 rounded-full border-2 border-white overflow-hidden mr-3">
+          <img 
+            :src="profileImage" 
+            alt="User Profile" 
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <!-- Name -->
+        <span class="text-white font-medium whitespace-nowrap text-sm">
+          {{ userName }}
+        </span>
       </div>
-      <!-- Profile Icon -->
-      <div class="h-10 w-10 rounded-full border-2 border-white overflow-hidden mr-3">
-        <img 
-          :src="profileImage" 
-          alt="User Profile" 
-          class="h-full w-full object-cover"
-        />
-      </div>
-      <!-- Name -->
-      <span class="text-white font-medium whitespace-nowrap text-sm">
-        {{ userName }}
-      </span>
     </div>
   </div>
 </template>
@@ -59,6 +69,7 @@ const startDragPos = ref(0);
 
 // Reactive values for drag effect
 const maxNegativeDrag = ref(-200); // How far to the left you can drag the tab
+const darkOverlayOpacity = ref(0); // Opacity for darkening overlay
 
 // Setup dragging functionality
 const startDrag = (event) => {
@@ -88,6 +99,9 @@ const handleDrag = (event) => {
   newPosition = Math.min(0, Math.max(maxNegativeDrag.value, newPosition));
   
   dragPosition.value = newPosition;
+  
+  // Update darkening overlay opacity
+  darkOverlayOpacity.value = Math.abs(newPosition) / Math.abs(maxNegativeDrag.value) * 0.5;
 };
 
 const endDrag = () => {
@@ -109,6 +123,15 @@ const endDrag = () => {
   } else {
     dragPosition.value = 0; // Snap back to initial position
   }
+  
+  // Reset darkening overlay opacity
+  darkOverlayOpacity.value = 0;
+};
+
+// Reset position when overlay is clicked
+const resetPosition = () => {
+  dragPosition.value = 0;
+  darkOverlayOpacity.value = 0;
 };
 
 // Clean up event listeners

@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@types/three": "^0.176.0",
+    "@vueuse/core": "^13.2.0",
     "html2canvas": "^1.4.1",
     "nuxt": "^3.16.2",
     "three": "^0.155.0",

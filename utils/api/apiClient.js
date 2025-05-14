@@ -2,10 +2,23 @@
  * Base API Client
  * Handles HTTP requests with built-in error handling, retries, and request management
  */
+import { useConfig } from '~/utils/config/useConfig';
 
-// Configuration defaults
+// Create a function to get config that works in both setup and outside setup
+const getConfig = () => {
+  try {
+    return useConfig();
+  } catch (e) {
+    // Fallback for when called outside of setup context
+    return {
+      getApiUrl: (endpoint) => `https://api.example.com/${endpoint}`,
+      features: { debugMode: false }
+    };
+  }
+};
+
+// Configuration defaults - will be overridden by environment variables
 const API_CONFIG = {
-  baseURL: process.env.API_BASE_URL || 'https://api.example.com', // Replace with your actual API URL
   timeout: 30000,
   retries: 2,
   retryDelay: 1000,
@@ -101,9 +114,12 @@ const getErrorType = (status) => {
  */
 const request = async (endpoint, options = {}) => {
   const config = { ...API_CONFIG, ...options };
+  const { getApiUrl, auth, features } = getConfig();
   let retries = config.retries;
   let lastError = null;
-  const url = endpoint.startsWith('http') ? endpoint : `${config.baseURL}${endpoint}`;
+  
+  // Use environment-specific API URL
+  const url = endpoint.startsWith('http') ? endpoint : getApiUrl(endpoint);
 
   // For caching GET requests or when cache is explicitly enabled
   const shouldCache = (options.method === 'GET' || options.method === undefined) && options.cache !== false;
@@ -112,6 +128,11 @@ const request = async (endpoint, options = {}) => {
   // Return cached response if available
   if (shouldCache && requestCache.has(cacheKey)) {
     return requestCache.get(cacheKey);
+  }
+
+  // Log request in debug mode
+  if (features.debugMode) {
+    console.log(`API Request: ${options.method || 'GET'} ${url}`);
   }
 
   // If it's a cacheable request, store the promise to avoid duplicate requests
@@ -125,8 +146,11 @@ const request = async (endpoint, options = {}) => {
         };
 
         // If token exists in localStorage, add it to headers (for client-side requests)
-        if (typeof window !== 'undefined' && localStorage.getItem('authToken')) {
-          headers.Authorization = `Bearer ${localStorage.getItem('authToken')}`;
+        if (typeof window !== 'undefined') {
+          const authToken = localStorage.getItem(auth.storageKey);
+          if (authToken) {
+            headers.Authorization = `Bearer ${authToken}`;
+          }
         }
 
         // Prepare request options
@@ -151,8 +175,19 @@ const request = async (endpoint, options = {}) => {
 
         // Parse and return successful response
         const data = await parseResponse(response);
+
+        // Log response in debug mode
+        if (features.debugMode) {
+          console.log(`API Response: ${options.method || 'GET'} ${url}`, data);
+        }
+
         return data;
       } catch (error) {
+        // Log error in debug mode
+        if (features.debugMode) {
+          console.error(`API Error: ${options.method || 'GET'} ${url}`, error);
+        }
+        
         lastError = error;
         if (retries > 0) {
           // Wait before retrying

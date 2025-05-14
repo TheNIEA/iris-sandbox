@@ -1,0 +1,150 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Mayo Test Sandbox API and Server-side Components
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: The deployment environment
+    
+  ApiStageName:
+    Type: String
+    Default: v1
+    Description: The API Gateway stage name
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        API_VERSION: !Ref ApiStageName
+
+Resources:
+  # API Gateway for REST endpoints
+  MayoApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref ApiStageName
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: ApiKeyAuthorizer
+        ApiKeyRequired: false
+        Authorizers:
+          ApiKeyAuthorizer:
+            FunctionArn: !GetAtt AuthFunction.Arn
+
+  # Authentication Lambda Function
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: auth.handler
+      CodeUri: ../server/auth/
+      Description: Authorizes API requests
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  # API Endpoints Lambda Functions
+  ProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: profile.handler
+      CodeUri: ../server/api/
+      Description: Handles user profile operations
+      Events:
+        GetProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MayoApiGateway
+            Path: /profile/{id}
+            Method: GET
+        UpdateProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MayoApiGateway
+            Path: /profile/{id}
+            Method: PUT
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserProfileTable
+
+  SkillsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: skills.handler
+      CodeUri: ../server/api/
+      Description: Handles skills assessment operations
+      Events:
+        GetSkills:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MayoApiGateway
+            Path: /skills/{userId}
+            Method: GET
+        UpdateSkills:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MayoApiGateway
+            Path: /skills/{userId}
+            Method: PUT
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserSkillsTable
+
+  # DynamoDB Tables
+  UserProfileTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub mayo-user-profiles-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  UserSkillsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub mayo-user-skills-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+        
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${MayoApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}
+    
+  AuthFunctionArn:
+    Description: Auth Function ARN
+    Value: !GetAtt AuthFunction.Arn
+    
+  ProfileFunctionArn:
+    Description: Profile Function ARN
+    Value: !GetAtt ProfileFunction.Arn
+    
+  SkillsFunctionArn:
+    Description: Skills Function ARN
+    Value: !GetAtt SkillsFunction.Arn

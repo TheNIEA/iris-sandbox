@@ -1,0 +1,81 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+jobs:
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    
+    # Map GitHub branch names to deployment environments
+    environment:
+      name: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'prod') || (github.ref == 'refs/heads/staging' && 'staging') || 'dev' }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+      
+      - name: Get environment
+        id: env
+        run: echo "environment=${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'prod') || (github.ref == 'refs/heads/staging' && 'staging') || 'dev' }}" >> $GITHUB_OUTPUT
+      
+      - name: Create env file
+        run: |
+          touch .env.${{ steps.env.outputs.environment }}
+          echo "NUXT_PUBLIC_APP_MODE=${{ steps.env.outputs.environment }}" >> .env.${{ steps.env.outputs.environment }}
+          echo "NUXT_PUBLIC_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env.${{ steps.env.outputs.environment }}
+          echo "NUXT_PUBLIC_AWS_REGION=${{ secrets.AWS_REGION || 'us-east-1' }}" >> .env.${{ steps.env.outputs.environment }}
+          echo "NUXT_PUBLIC_DEBUG_MODE=${{ steps.env.outputs.environment != 'prod' }}" >> .env.${{ steps.env.outputs.environment }}
+      
+      - name: Build application
+        run: |
+          NODE_ENV=${{ steps.env.outputs.environment }} npm run build
+      
+      - name: Deploy to AWS
+        run: |
+          aws s3 sync .output/public/ s3://mayo-test-assets-${{ steps.env.outputs.environment }}/ --delete
+          
+          # Get CloudFront distribution ID
+          CLOUDFRONT_ID=$(aws cloudformation describe-stacks --stack-name mayo-test-sandbox-${{ steps.env.outputs.environment }} --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" --output text)
+          
+          # Invalidate CloudFront cache
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
+      
+      - name: Deployment summary
+        run: |
+          CLOUDFRONT_DOMAIN=$(aws cloudformation describe-stacks --stack-name mayo-test-sandbox-${{ steps.env.outputs.environment }} --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDomainName'].OutputValue" --output text)
+          
+          echo "::notice::Deployment completed successfully!"
+          echo "::notice::Application URL: https://$CLOUDFRONT_DOMAIN"
